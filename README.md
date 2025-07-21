@@ -1,20 +1,11 @@
-# Expo Router Example
+# Finder App - Mobile App
 
-Use [`expo-router`](https://docs.expo.dev/router/introduction/) to build native navigation using files in the `app/` directory.
+## Presentation
 
-## 🚀 How to use
+This repo is related to a training course brief involving creating an App intended to let users post announces for lost and found items. The brief itself is based on three components :
 
-```sh
-npx create-expo-app -e with-router
-```
+Headless API : Providing authentification and data crud, the chosen stack for this part is Spring Boot and Postgresql inside docker containers.
+Client : App the users will be interacting with for the intended features. Will be made using React Native.
+Back office : Interface restricted to admin only and mainly intended for moderation purpose. Will be made with Angular.
 
-## Deploy
-
-Deploy on all platforms with Expo Application Services (EAS).
-
-- Deploy the website: `npx eas-cli deploy` — [Learn more](https://docs.expo.dev/eas/hosting/get-started/)
-- Deploy on iOS and Android using: `npx eas-cli build` — [Learn more](https://expo.dev/eas)
-
-## 📝 Notes
-
-- [Expo Router: Docs](https://docs.expo.dev/router/introduction/)
+This repo covers the subproject related to the mobile client intended for all users to interact with the available features.
