@@ -13,14 +13,7 @@ export const drawerStyles = StyleSheet.create({
     item: {
         paddingVertical: DIMENSIONS.spacings.buttons.paddingVertical,
         paddingHorizontal: DIMENSIONS.spacings.buttons.paddingHorizontal,
-        // backgroundColor: '#fff',
     },
-    // activeItem: {
-    //     backgroundColor: COLOR_STYLES.defaultTheme.colorInteractiveActive,
-    // },
-    // inactiveItem: {
-    //     backgroundColor: COLOR_STYLES.defaultTheme.colorInteractiveInactive,
-    // },
     label: {
         fontSize: FONT_STYLES.sizes.l,
         color: COLOR_STYLES.defaultTheme.colorInteractiveInactive,

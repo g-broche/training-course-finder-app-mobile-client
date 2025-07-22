@@ -1,5 +1,8 @@
 export const DIMENSIONS = {
     sizes: {
+        drawer: {
+            width: 260,
+        },
         appHeader: {
             height: 56
         },
