@@ -4,7 +4,7 @@ export const COLOR_STYLES = {
         colorBackgroundSecondary: "#5B768B",
         colorBackdrop: "#000000",
         colorFont: "#FAF4E9",
-        colorInteractiveInactive: "#F3E190",
+        colorInteractiveInactive: "#e8dca8ff",
         colorInteractiveActive: "#FFD900",
         danger: "#FF4A39",
     }

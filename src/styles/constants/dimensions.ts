@@ -1,0 +1,40 @@
+export const DIMENSIONS = {
+    sizes: {
+        appHeader: {
+            height: 56
+        },
+        interactives: {
+            width: 36
+        }
+    },
+    spacings: {
+        header: {
+            paddings: {
+                paddingHorizontal: 10
+            },
+        },
+        main: {
+            paddings: {
+                paddingTop: 25,
+                paddingBottom: 25,
+                paddingLeft: 12,
+                paddingRight: 12,
+            }
+        },
+        buttons: {
+            paddingVertical: 4,
+            paddingHorizontal: 12,
+        },
+        gaps: {
+            xxl: 24,
+            xl: 16,
+            l: 12,
+            m: 8,
+            s: 4,
+        }
+    },
+    borderRadius: {
+        l: 16,
+        m: 8,
+    },
+}

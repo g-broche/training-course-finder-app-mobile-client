@@ -1,24 +1,32 @@
-import { Tabs } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { COLOR_STYLES } from './styles/constants/colors';
+import { COLOR_STYLES } from '../src/styles/constants/colors';
+import CustomDrawerContent from '../src/components/custom-drawer-content';
+
 export default function RootLayout() {
     return (
         <SafeAreaProvider>
-            <Tabs
-                screenOptions={{
-                    headerShown: false,
-                    tabBarActiveTintColor: COLOR_STYLES.defaultTheme.colorInteractiveActive,
-                    tabBarInactiveTintColor: COLOR_STYLES.defaultTheme.colorInteractiveInactive,
-                    tabBarStyle: { backgroundColor: COLOR_STYLES.defaultTheme.colorBackgroundPrimary },
-                }}
+            <Drawer
+                screenOptions={{ headerShown: false }}
+                drawerContent={(props) => <CustomDrawerContent {...props} />}
             >
-                <Tabs.Screen name="home" options={{ title: 'Home' }}
-                />
-                <Tabs.Screen name="found" options={{ title: 'Found' }}
-                />
-                <Tabs.Screen name="lost" options={{ title: 'Lost' }}
-                />
-            </Tabs>
+                <Drawer.Screen name="(tabs)" options={{ drawerLabel: 'Home' }} />
+            </Drawer>
         </SafeAreaProvider>
     );
 }
+
+const drawerScreenOptions = {
+    headerShown: false,
+    drawerStyle: {
+        backgroundColor: COLOR_STYLES.defaultTheme.colorBackgroundSecondary,
+        width: 300,
+    },
+    drawerLabelStyle: {
+        color: '#666',
+        fontSize: 16,
+    },
+    drawerActiveTintColor: '#000',
+    drawerInactiveTintColor: COLOR_STYLES.defaultTheme.colorInteractiveInactive,
+    drawerType: 'front' as const,
+};

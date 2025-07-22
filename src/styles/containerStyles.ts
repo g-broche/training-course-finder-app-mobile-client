@@ -17,6 +17,6 @@ export const containerStyles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: DIMENSIONS.spacings.main.gap
+        gap: DIMENSIONS.spacings.gaps.xl
     },
 });
