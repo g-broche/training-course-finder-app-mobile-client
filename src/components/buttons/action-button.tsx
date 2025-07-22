@@ -12,7 +12,7 @@ export default function ActionButton({ title, callback }: ActionButtonProps) {
 
   return (
     <TouchableOpacity style={buttonStyles.default} onPress={() => callback()}>
-      <Text style={textStyles.interactiveActive}>{title}</Text>
+      <Text style={buttonStyles.label}>{title}</Text>
     </TouchableOpacity>
   );
 }

@@ -10,7 +10,7 @@ export default function NavigationButton({ title, pathname, params }: RouteDefin
 
     return (
         <TouchableOpacity style={buttonStyles.default} onPress={() => router.push({ pathname, params })}>
-            <Text style={textStyles.default}>{title}</Text>
+            <Text style={buttonStyles.label}>{title}</Text>
         </TouchableOpacity>
     );
 }

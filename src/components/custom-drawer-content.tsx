@@ -17,7 +17,10 @@ export default function CustomDrawerContent(props: any) {
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={drawerStyles.drawer}>
       {drawerItems.map(({ label, route }) => {
-        const isActive = pathname === route;
+        const isActive =
+          route === '/home'
+            ? pathname === '/' || pathname === '/home'
+            : pathname === route;
 
         return (
           <Pressable

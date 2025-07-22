@@ -10,18 +10,22 @@ import { COLOR_STYLES } from '../../styles/constants/colors';
 import HeaderUserAuth from './header-user-auth';
 import Burger from './burger';
 
-export default function AppHeader() {
-    const navigation = useNavigation<DrawerNavigationProp<any>>();
+type AppHeaderProps = {
+    onSignInPress: () => void;
+};
 
+export default function AppHeader({ onSignInPress }: AppHeaderProps) {
     return (
         <SafeAreaView style={containerStyles.viewContainer}>
             <View style={headerStyles.container}>
-                <Burger></Burger>
+                {/* Your Burger menu */}
+                <Burger />
 
                 <Text style={headerStyles.title}>Retriever</Text>
 
                 <View style={headerStyles.actions}>
-                    <HeaderUserAuth></HeaderUserAuth>
+                    {/* Pass the handler to HeaderUserAuth */}
+                    <HeaderUserAuth onSignInPress={onSignInPress} />
                 </View>
             </View>
         </SafeAreaView>

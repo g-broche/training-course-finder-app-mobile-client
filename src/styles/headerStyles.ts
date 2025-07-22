@@ -10,7 +10,7 @@ export const headerStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: COLOR_STYLES.defaultTheme.colorBackgroundPrimary,
+        backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
         position: 'relative', // Needed for absolute positioning of title
     },
     icon: {

@@ -8,7 +8,7 @@ export const drawerStyles = StyleSheet.create({
         flex: 1,
         paddingTop: DIMENSIONS.sizes.appHeader.height + DIMENSIONS.spacings.gaps.xl,
         gap: DIMENSIONS.spacings.gaps.xl,
-        backgroundColor: COLOR_STYLES.defaultTheme.colorBackgroundSecondary
+        backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary
     },
     item: {
         paddingVertical: DIMENSIONS.spacings.buttons.paddingVertical,

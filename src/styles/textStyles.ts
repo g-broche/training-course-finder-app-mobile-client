@@ -4,18 +4,18 @@ import { FONT_STYLES } from "./constants/fonts";
 
 export const textStyles = StyleSheet.create({
     heading1: {
-        color: COLOR_STYLES.defaultTheme.colorFont,
+        color: COLOR_STYLES.defaultTheme.colorTertiary,
         fontWeight: FONT_STYLES.weight.boldest,
         fontSize: FONT_STYLES.sizes.xxl
     },
     heading2: {
-        color: COLOR_STYLES.defaultTheme.colorFont,
+        color: COLOR_STYLES.defaultTheme.colorTertiary,
         fontWeight: FONT_STYLES.weight.boldest,
         fontSize: FONT_STYLES.sizes.xl
     },
     heading3: {
-        color: COLOR_STYLES.defaultTheme.colorFont,
-        fontWeight: FONT_STYLES.weight.boldest,
+        color: COLOR_STYLES.defaultTheme.colorTertiary,
+        fontWeight: FONT_STYLES.weight.bolder,
         fontSize: FONT_STYLES.sizes.l
     },
     interactiveActive: {
@@ -34,7 +34,7 @@ export const textStyles = StyleSheet.create({
         fontSize: FONT_STYLES.sizes.m
     },
     default: {
-        color: COLOR_STYLES.defaultTheme.colorFont,
+        color: COLOR_STYLES.defaultTheme.colorTertiary,
         fontWeight: FONT_STYLES.weight.regular,
         fontSize: FONT_STYLES.sizes.m
     }

@@ -4,16 +4,18 @@ import { DIMENSIONS } from "./constants/dimensions";
 
 export const buttonStyles = StyleSheet.create({
     default: {
-        borderRadius: DIMENSIONS.borderRadius.l,
-        borderColor: COLOR_STYLES.defaultTheme.colorInteractiveActive,
-        borderWidth: 1,
+        borderRadius: DIMENSIONS.borderRadius.m,
         paddingHorizontal: DIMENSIONS.spacings.buttons.paddingHorizontal,
         paddingVertical: DIMENSIONS.spacings.buttons.paddingVertical,
-        backgroundColor: COLOR_STYLES.defaultTheme.colorBackgroundPrimary,
+        backgroundColor: COLOR_STYLES.defaultTheme.colorInteractiveActive,
         alignItems: 'center',
     },
+    label: {
+        color: COLOR_STYLES.defaultTheme.colorPrimary,
+        textAlign: "center"
+    },
     icon: {
-        backgroundColor: COLOR_STYLES.defaultTheme.colorBackgroundPrimary,
+        backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
         alignItems: 'center',
         justifyContent: 'center',
     }

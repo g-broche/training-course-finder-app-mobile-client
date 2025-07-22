@@ -9,31 +9,32 @@ import IconActionButton from '../buttons/icon-action-button';
 import { COLOR_STYLES } from '../../styles/constants/colors';
 import { DIMENSIONS } from '../../styles/constants/dimensions';
 
-export default function HeaderUserAuth() {
+type HeaderUserAuthProps = {
+    onSignInPress: () => void;
+};
+
+export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
     const [logged, setLogged] = useState(false);
 
-    const logUser = () => {
-        setLogged(true);
-    }
-
-    const logoutUser = () => {
-        setLogged(false);
-    }
+    const logUser = () => setLogged(true);
+    const logoutUser = () => setLogged(false);
 
     if (!logged) {
         return (
             <View>
-                <ActionButton title='Sign in' callback={logUser}></ActionButton>
+                {/* Instead of local state, call the parent's modal handler */}
+                <ActionButton title="Sign in" callback={onSignInPress} />
             </View>
         );
     } else {
         return (
             <View>
                 <IconActionButton
-                    iconName='person-circle-outline'
+                    iconName="person-circle-outline"
                     size={DIMENSIONS.sizes.interactives.width}
                     color={COLOR_STYLES.defaultTheme.colorInteractiveActive}
-                    callback={logoutUser}></IconActionButton>
+                    callback={logoutUser}
+                />
             </View>
         );
     }
