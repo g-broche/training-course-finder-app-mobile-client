@@ -14,28 +14,29 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { textStyles } from '../../styles/textStyles';
 import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
+import { getToken, getUserFromToken, registerUser } from '../../services/authService';
 
 type FormData = {
-    first_name: string;
-    last_name: string;
-    display_name: string;
+    firstName: string;
+    lastName: string;
+    displayName: string;
     email: string;
     password: string;
-    password_confirm: string; // Added confirm password
-    has_accepted_gdpr: boolean;
+    passwordConfirm: string;
+    hasAcceptedGdpr: boolean;
 };
 
 const schema = yup.object().shape({
-    first_name: yup.string().required('First name is required'),
-    last_name: yup.string().required('Last name is required'),
-    display_name: yup.string().required('Display name is required'),
+    firstName: yup.string().required('First name is required'),
+    lastName: yup.string().required('Last name is required'),
+    displayName: yup.string().required('Display name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
-    password_confirm: yup
+    passwordConfirm: yup
         .string()
         .oneOf([yup.ref('password'), null], 'Passwords must match')
         .required('Please confirm your password'),
-    has_accepted_gdpr: yup
+    hasAcceptedGdpr: yup
         .bool()
         .oneOf([true], 'You must accept GDPR terms'),
 });
@@ -45,12 +46,12 @@ type InputField = {
 } & Partial<TextInputProps>;
 
 const inputs: InputField[] = [
-    { name: 'first_name', placeholder: 'First Name' },
-    { name: 'last_name', placeholder: 'Last Name' },
-    { name: 'display_name', placeholder: 'Display Name' },
+    { name: 'firstName', placeholder: 'First Name' },
+    { name: 'lastName', placeholder: 'Last Name' },
+    { name: 'displayName', placeholder: 'Display Name' },
     { name: 'email', placeholder: 'Email', keyboardType: 'email-address', autoCapitalize: 'none' },
     { name: 'password', placeholder: 'Password', secureTextEntry: true },
-    { name: 'password_confirm', placeholder: 'Confirm Password', secureTextEntry: true }, // Added here
+    { name: 'passwordConfirm', placeholder: 'Confirm Password', secureTextEntry: true },
 ];
 
 export default function SignUpForm() {
@@ -61,19 +62,27 @@ export default function SignUpForm() {
     } = useForm<FormData>({
         resolver: yupResolver(schema),
         defaultValues: {
-            first_name: '',
-            last_name: '',
-            display_name: '',
+            firstName: '',
+            lastName: '',
+            displayName: '',
             email: '',
             password: '',
-            password_confirm: '',
-            has_accepted_gdpr: false,
+            passwordConfirm: '',
+            hasAcceptedGdpr: false,
         },
     });
 
-    const onSubmit = (data: FormData) => {
-        Alert.alert('Account Info', JSON.stringify(data, null, 2));
-        // TODO: send data to backend API
+    const onSubmit = async (data: FormData) => {
+        try {
+            console.log("form data:", data)
+            const token = await registerUser(data);
+            console.log(getToken());
+            console.log("user from token:", getUserFromToken());
+        } catch (error) {
+            console.log(error)
+            Alert.alert('Sign up error', error);
+        }
+
     };
 
     return (
@@ -102,7 +111,7 @@ export default function SignUpForm() {
 
             {/* GDPR Checkbox */}
             <Controller
-                name="has_accepted_gdpr"
+                name="hasAcceptedGdpr"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                     <Pressable
@@ -114,8 +123,8 @@ export default function SignUpForm() {
                     </Pressable>
                 )}
             />
-            {errors.has_accepted_gdpr && (
-                <Text style={formStyles.errorText}>{errors.has_accepted_gdpr.message}</Text>
+            {errors.hasAcceptedGdpr && (
+                <Text style={formStyles.errorText}>{errors.hasAcceptedGdpr.message}</Text>
             )}
 
             <ActionButton title='Confirm' callback={handleSubmit(onSubmit)}></ActionButton>
