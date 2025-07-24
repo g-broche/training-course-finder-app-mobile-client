@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { Credentials, SignUpData } from '../types/interface';
 import { loginUser, registerUser } from '../services/authService';
 import axios from 'axios';
 
+const TOKEN_KEY = "jwt"
 
 interface AuthState {
     state: { token: string | null; authenticated: boolean | null };
@@ -12,7 +13,6 @@ interface AuthState {
     logout: () => Promise<void>;
 };
 
-const TOKEN_KEY = "jwt"
 export const AuthContext = createContext<AuthState | undefined>(undefined);
 
 
@@ -20,7 +20,7 @@ export const useAuth = () => {
     return useContext(AuthContext);
 };
 
-export const AuthProvider = ({ children }: any) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [state, setState] = useState<{
         token: string | null;
         authenticated: boolean | null
@@ -39,6 +39,11 @@ export const AuthProvider = ({ children }: any) => {
                 setState({
                     token: token,
                     authenticated: true
+                })
+            } else {
+                setState({
+                    token: null,
+                    authenticated: false
                 })
             }
         }

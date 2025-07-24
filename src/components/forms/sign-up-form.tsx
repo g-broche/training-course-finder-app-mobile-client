@@ -42,8 +42,6 @@ const schema = yup.object().shape({
         .oneOf([true], 'You must accept GDPR terms'),
 });
 
-const authState = useContext(AuthContext)
-
 type InputField = {
     name: keyof FormData;
 } & Partial<TextInputProps>;
@@ -58,6 +56,8 @@ const inputs: InputField[] = [
 ];
 
 export default function SignUpForm() {
+    const authState = useContext(AuthContext)
+
     const {
         control,
         handleSubmit,

@@ -5,13 +5,12 @@ import { containerStyles } from '../../styles/containerStyles';
 import HeaderUserAuth from './header-user-auth';
 import Burger from './burger';
 
-type AppHeaderProps = {
-    onSignInPress: () => void;
-};
+// type AppHeaderProps = {
+//     onSignInPress: () => void;
+// };
 
-
-
-export default function AppHeader({ onSignInPress }: AppHeaderProps) {
+// export default function AppHeader({ onSignInPress }: AppHeaderProps) {
+export default function AppHeader() {
     return (
         <SafeAreaView style={containerStyles.viewContainer}>
             <View style={headerStyles.container}>
@@ -21,8 +20,8 @@ export default function AppHeader({ onSignInPress }: AppHeaderProps) {
                 <Text style={headerStyles.title}>Retriever</Text>
 
                 <View style={headerStyles.actions}>
-                    {/* Pass the handler to HeaderUserAuth */}
-                    <HeaderUserAuth onSignInPress={onSignInPress} />
+                    {/* <HeaderUserAuth onSignInPress={onSignInPress} /> */}
+                    <HeaderUserAuth />
                 </View>
             </View>
         </SafeAreaView>

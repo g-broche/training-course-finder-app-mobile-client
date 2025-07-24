@@ -26,8 +26,6 @@ const loginSchema = yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().required('Password is required'),
 });
-const authState = useContext(AuthContext)
-console.log('AuthContext login:', authState.login);
 
 type InputField = {
     name: keyof LoginFormData;
@@ -39,6 +37,7 @@ const inputs: InputField[] = [
 ];
 
 export default function SignInForm() {
+    const authState = useContext(AuthContext)
     const {
         control,
         handleSubmit,

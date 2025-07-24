@@ -9,7 +9,8 @@ import * as SystemUI from 'expo-system-ui';
 import { DIMENSIONS } from '../src/styles/constants/dimensions';
 import { Platform, View } from 'react-native';
 import { AuthProvider } from '../src/context/AuthContext';
-import { Slot } from 'expo-router';
+import { Slot, Stack } from 'expo-router';
+import AppHeader from '../src/components/header/app-header';
 
 export default function RootLayout() {
     useEffect(() => {
@@ -19,11 +20,27 @@ export default function RootLayout() {
         }
     }, []);
 
-    return (
-        <AuthProvider>
+    const InitialLayout = () => {
+        return (
+            <SafeAreaProvider>
+                <StatusBar style="light" />
+                <Stack>
+                    <Stack.Screen
+                        name='(tabs)'
+                        options={{
+                            header: () => (<AppHeader />),
+                            animation: "none"
+                        }}
+                    />
+                </Stack>
+            </SafeAreaProvider>
+        )
+    }
+
+    const BackupLayoutThatMayWorkInACentury = () => {
+        return (
             <SafeAreaProvider>
                 <View style={{ flex: 1, backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary }}>
-                    <StatusBar style="light" />
                     <Drawer
                         screenOptions={{
                             headerShown: false,
@@ -38,6 +55,12 @@ export default function RootLayout() {
                     </Drawer>
                 </View>
             </SafeAreaProvider >
+        )
+    }
+
+    return (
+        <AuthProvider>
+            <InitialLayout />
         </AuthProvider>
     );
 }
