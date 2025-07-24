@@ -5,30 +5,47 @@ import CustomDrawerContent from '../src/components/custom-drawer-content';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import * as NavigationBar from 'expo-navigation-bar';
+import * as SystemUI from 'expo-system-ui';
 import { DIMENSIONS } from '../src/styles/constants/dimensions';
+import { Platform, View } from 'react-native';
+import { AuthProvider } from '../src/context/AuthContext';
+import { Slot, Tabs } from 'expo-router';
 
 export default function RootLayout() {
     useEffect(() => {
-        NavigationBar.setBackgroundColorAsync(COLOR_STYLES.defaultTheme.colorBackgroundPrimary);
-        NavigationBar.setButtonStyleAsync('light');
+        if (Platform.OS === 'android') {
+            NavigationBar.setButtonStyleAsync('light');
+            SystemUI.setBackgroundColorAsync(COLOR_STYLES.defaultTheme.colorPrimary);
+        }
     }, []);
-    return (
-        <>
-            <StatusBar style="light" backgroundColor={COLOR_STYLES.defaultTheme.colorBackgroundPrimary} />
+
+    const Content = () => {
+        return (
             <SafeAreaProvider>
-                <Drawer
-                    screenOptions={{
-                        headerShown: false,
-                        drawerStyle: {
-                            width: DIMENSIONS.sizes.drawer.width,
-                            backgroundColor: COLOR_STYLES.defaultTheme.colorBackgroundSecondary,
-                        },
-                    }}
-                    drawerContent={(props) => <CustomDrawerContent {...props} />}
-                >
-                    <Drawer.Screen name="(tabs)" options={{ drawerLabel: 'Home' }} />
-                </Drawer>
-            </SafeAreaProvider>
-        </>
+                <View style={{ flex: 1, backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary }}>
+                    <StatusBar style="light" />
+                    <Drawer
+                        screenOptions={{
+                            headerShown: false,
+                            drawerStyle: {
+                                width: DIMENSIONS.sizes.drawer.width,
+                                backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
+                            },
+                        }}
+                        drawerContent={(props) => <CustomDrawerContent {...props} />}
+                    >
+                        <Slot />
+
+
+                    </Drawer>
+                </View>
+            </SafeAreaProvider >
+        )
+    }
+
+    return (
+        <AuthProvider>
+            <Content />
+        </AuthProvider>
     );
 }

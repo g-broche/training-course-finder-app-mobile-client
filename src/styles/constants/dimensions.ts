@@ -18,14 +18,17 @@ export const DIMENSIONS = {
         },
         main: {
             paddings: {
-                paddingTop: 25,
+                paddingTop: 40,
                 paddingBottom: 25,
                 paddingLeft: 12,
                 paddingRight: 12,
             }
         },
+        modal: {
+            padding: 25
+        },
         buttons: {
-            paddingVertical: 4,
+            paddingVertical: 8,
             paddingHorizontal: 12,
         },
         gaps: {

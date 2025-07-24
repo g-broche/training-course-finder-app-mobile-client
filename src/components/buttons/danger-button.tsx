@@ -8,10 +8,10 @@ interface ActionButtonProps {
   callback: (...args: any[]) => any;
 }
 
-export default function ActionButton({ title, callback }: ActionButtonProps) {
+export default function DangerButton({ title, callback }: ActionButtonProps) {
 
   return (
-    <TouchableOpacity style={buttonStyles.default} onPress={() => callback()}>
+    <TouchableOpacity style={buttonStyles.danger} onPress={() => callback()}>
       <Text style={buttonStyles.label}>{title}</Text>
     </TouchableOpacity>
   );

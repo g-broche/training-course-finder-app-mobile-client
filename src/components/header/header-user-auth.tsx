@@ -8,33 +8,39 @@ import ActionButton from '../buttons/action-button';
 import IconActionButton from '../buttons/icon-action-button';
 import { COLOR_STYLES } from '../../styles/constants/colors';
 import { DIMENSIONS } from '../../styles/constants/dimensions';
+import { useAuth } from '../../context/AuthContext';
+import UserDetailDropdown from './user-detail-dropdown';
 
-export default function HeaderUserAuth() {
-    const [logged, setLogged] = useState(false);
+type HeaderUserAuthProps = {
+    onSignInPress: () => void;
+};
 
-    const logUser = () => {
-        setLogged(true);
-    }
+export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
+    const { authState, onLogout } = useAuth();
+    const [showDropdown, setShowDropdown] = useState(false);
 
-    const logoutUser = () => {
-        setLogged(false);
-    }
-
-    if (!logged) {
+    if (!authState.authenticated) {
         return (
             <View>
-                <ActionButton title='Sign in' callback={logUser}></ActionButton>
-            </View>
-        );
-    } else {
-        return (
-            <View>
-                <IconActionButton
-                    iconName='person-circle-outline'
-                    size={DIMENSIONS.sizes.interactives.width}
-                    color={COLOR_STYLES.defaultTheme.colorInteractiveActive}
-                    callback={logoutUser}></IconActionButton>
+                <ActionButton title="Sign in" callback={onSignInPress} />
             </View>
         );
     }
+
+    const toggleDropdown = () => {
+        setShowDropdown(prev => !prev);
+    };
+
+    return (
+        <View>
+            <IconActionButton
+                iconName="person-circle-outline"
+                size={DIMENSIONS.sizes.interactives.width}
+                color={COLOR_STYLES.defaultTheme.colorInteractiveActive}
+                callback={toggleDropdown}
+            />
+            {showDropdown && <UserDetailDropdown onLogout={onLogout!} />}
+
+        </View>
+    );
 }
