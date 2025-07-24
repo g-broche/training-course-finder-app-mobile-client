@@ -43,7 +43,7 @@ export const getUserFromToken = async (): Promise<User | null> => {
         const decoded: any = jwtDecode(token);
         const user: User = {
             uuid: decoded.uuid,
-            email: decoded.sub, // JWT subject = email
+            email: decoded.sub,
             roles: decoded.roles,
             firstName: decoded.firstName,
             lastName: decoded.lastName,

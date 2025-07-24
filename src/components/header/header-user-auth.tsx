@@ -9,6 +9,7 @@ import IconActionButton from '../buttons/icon-action-button';
 import { COLOR_STYLES } from '../../styles/constants/colors';
 import { DIMENSIONS } from '../../styles/constants/dimensions';
 import { useAuth } from '../../context/AuthContext';
+import UserDetailDropdown from './user-detail-dropdown';
 
 type HeaderUserAuthProps = {
     onSignInPress: () => void;
@@ -16,6 +17,7 @@ type HeaderUserAuthProps = {
 
 export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
     const { authState, onLogout } = useAuth();
+    const [showDropdown, setShowDropdown] = useState(false);
 
     if (!authState.authenticated) {
         return (
@@ -25,14 +27,20 @@ export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
         );
     }
 
+    const toggleDropdown = () => {
+        setShowDropdown(prev => !prev);
+    };
+
     return (
         <View>
             <IconActionButton
                 iconName="person-circle-outline"
                 size={DIMENSIONS.sizes.interactives.width}
                 color={COLOR_STYLES.defaultTheme.colorInteractiveActive}
-                callback={onLogout}
+                callback={toggleDropdown}
             />
+            {showDropdown && <UserDetailDropdown onLogout={onLogout!} />}
+
         </View>
     );
 }

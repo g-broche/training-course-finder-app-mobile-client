@@ -10,6 +10,13 @@ export const buttonStyles = StyleSheet.create({
         backgroundColor: COLOR_STYLES.defaultTheme.colorInteractiveActive,
         alignItems: 'center',
     },
+    danger: {
+        borderRadius: DIMENSIONS.borderRadius.m,
+        paddingHorizontal: DIMENSIONS.spacings.buttons.paddingHorizontal,
+        paddingVertical: DIMENSIONS.spacings.buttons.paddingVertical,
+        backgroundColor: COLOR_STYLES.defaultTheme.danger,
+        alignItems: 'center',
+    },
     label: {
         color: COLOR_STYLES.defaultTheme.colorPrimary,
         textAlign: "center"
