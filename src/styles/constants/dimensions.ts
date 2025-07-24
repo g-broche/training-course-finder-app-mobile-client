@@ -18,7 +18,7 @@ export const DIMENSIONS = {
         },
         main: {
             paddings: {
-                paddingTop: 25,
+                paddingTop: 40,
                 paddingBottom: 25,
                 paddingLeft: 12,
                 paddingRight: 12,

@@ -6,19 +6,15 @@ import type { DrawerNavigationProp } from '@react-navigation/drawer';
 import { COLOR_STYLES } from '../../src/styles/constants/colors';
 // import CustomHeader from '../../src/components/header/app-header';
 import AppHeader from '../../src/components/header/app-header';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import SignUpForm from '../../src/components/forms/sign-up-form';
 import SignInForm from '../../src/components/forms/sign-in-form';
 import { modalStyles } from '../../src/styles/modalStyles';
-
-type DrawerParamList = {
-    '(tabs)': undefined;
-    settings: undefined;
-    profile: undefined;
-};
+import { useAuth } from '../../src/context/AuthContext';
 
 export default function TabsLayout() {
+    const { authState } = useAuth();
     const [isModalVisible, setModalVisible] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
 
@@ -27,10 +23,11 @@ export default function TabsLayout() {
         setModalVisible(true);
     };
 
-    const openSignUpModal = () => {
-        setIsSignUp(true);
-        setModalVisible(true);
-    };
+    useEffect(() => {
+        if (authState?.authenticated) {
+            closeModal();
+        }
+    }, [authState?.authenticated]);
 
     const closeModal = () => setModalVisible(false);
 
@@ -73,7 +70,9 @@ export default function TabsLayout() {
 
             <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
                 <ScrollView style={modalStyles.container}>
-                    {isSignUp ? <SignUpForm /> : <SignInForm />}
+                    {isSignUp
+                        ? <SignUpForm />
+                        : <SignInForm />}
 
                     <Pressable onPress={() => setIsSignUp(!isSignUp)} style={{ marginTop: 10 }}>
                         <Text style={{ color: COLOR_STYLES.defaultTheme.colorInteractiveActive, textAlign: 'center' }}>

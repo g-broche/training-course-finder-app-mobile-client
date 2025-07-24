@@ -43,8 +43,8 @@ export const AuthProvider = ({ children }: any) => {
             }
         }
 
-        // loadToken();
-    });
+        loadToken();
+    }, []);
 
     const register = async (data: SignUpData) => {
         try {
@@ -67,6 +67,8 @@ export const AuthProvider = ({ children }: any) => {
                 token: receivedToken,
                 authenticated: true
             })
+            axios.defaults.headers.common['Authorization'] = `Bearer ${receivedToken}`;
+            await SecureStore.setItemAsync(TOKEN_KEY, receivedToken)
         } catch (error) {
             console.log(error)
         }

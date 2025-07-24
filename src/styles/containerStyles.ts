@@ -8,6 +8,7 @@ export const containerStyles = StyleSheet.create({
         backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
     },
     main: {
+        marginTop: DIMENSIONS.sizes.appHeader.height,
         paddingTop: DIMENSIONS.spacings.main.paddings.paddingTop,
         paddingBottom: DIMENSIONS.spacings.main.paddings.paddingBottom,
         paddingLeft: DIMENSIONS.spacings.main.paddings.paddingLeft,

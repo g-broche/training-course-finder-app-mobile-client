@@ -9,7 +9,7 @@ import * as SystemUI from 'expo-system-ui';
 import { DIMENSIONS } from '../src/styles/constants/dimensions';
 import { Platform, View } from 'react-native';
 import { AuthProvider } from '../src/context/AuthContext';
-import { Slot } from 'expo-router';
+import { Slot, Tabs } from 'expo-router';
 
 export default function RootLayout() {
     useEffect(() => {
@@ -19,8 +19,8 @@ export default function RootLayout() {
         }
     }, []);
 
-    return (
-        <AuthProvider>
+    const Content = () => {
+        return (
             <SafeAreaProvider>
                 <View style={{ flex: 1, backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary }}>
                     <StatusBar style="light" />
@@ -35,9 +35,17 @@ export default function RootLayout() {
                         drawerContent={(props) => <CustomDrawerContent {...props} />}
                     >
                         <Slot />
+
+
                     </Drawer>
                 </View>
             </SafeAreaProvider >
+        )
+    }
+
+    return (
+        <AuthProvider>
+            <Content />
         </AuthProvider>
     );
 }
