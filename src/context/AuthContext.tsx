@@ -5,23 +5,23 @@ import { loginUser, registerUser } from '../services/authService';
 import axios from 'axios';
 
 
-interface AuthProps {
-    authState?: { token: string | null; authenticated: boolean | null };
-    onRegister?: (data: SignUpData) => Promise<void>;
-    onLogin?: (credentials: Credentials) => Promise<void>;
-    onLogout?: () => Promise<void>;
+interface AuthState {
+    state: { token: string | null; authenticated: boolean | null };
+    register: (data: SignUpData) => Promise<void>;
+    login: (credentials: Credentials) => Promise<void>;
+    logout: () => Promise<void>;
 };
 
 const TOKEN_KEY = "jwt"
-const AuthContext = createContext<AuthProps>({});
+export const AuthContext = createContext<AuthState | undefined>(undefined);
 
 
 export const useAuth = () => {
-    return useContext(AuthContext);;
+    return useContext(AuthContext);
 };
 
 export const AuthProvider = ({ children }: any) => {
-    const [authState, setAuthState] = useState<{
+    const [state, setState] = useState<{
         token: string | null;
         authenticated: boolean | null
     }>({
@@ -36,20 +36,19 @@ export const AuthProvider = ({ children }: any) => {
 
             if (token) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                setAuthState({
+                setState({
                     token: token,
                     authenticated: true
                 })
             }
         }
-
-        // loadToken();
-    });
+        loadToken();
+    }, []);
 
     const register = async (data: SignUpData) => {
         try {
             const receivedToken = await registerUser(data);
-            setAuthState({
+            setState({
                 token: receivedToken,
                 authenticated: true
             })
@@ -63,10 +62,12 @@ export const AuthProvider = ({ children }: any) => {
     const login = async (credentials: Credentials) => {
         try {
             const receivedToken = await loginUser(credentials);
-            setAuthState({
+            setState({
                 token: receivedToken,
                 authenticated: true
             })
+            axios.defaults.headers.common['Authorization'] = `Bearer ${receivedToken}`;
+            await SecureStore.setItemAsync(TOKEN_KEY, receivedToken)
         } catch (error) {
             console.log(error)
         }
@@ -77,22 +78,22 @@ export const AuthProvider = ({ children }: any) => {
 
         axios.defaults.headers.common['Authorization'] = ``;
 
-        setAuthState({
+        setState({
             token: null,
             authenticated: false
         })
 
     };
 
-    const value = {
-        onRegister: register,
-        onLogin: login,
-        onLogout: logout,
-        authState
-    }
-
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider
+            value={{
+                state,
+                register,
+                login,
+                logout,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

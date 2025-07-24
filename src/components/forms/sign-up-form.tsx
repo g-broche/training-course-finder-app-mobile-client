@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     View,
     Text,
@@ -15,7 +15,7 @@ import { textStyles } from '../../styles/textStyles';
 import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
 import { getToken, getUserFromToken, registerUser } from '../../services/authService';
-import { useAuth } from '../../context/AuthContext';
+import { AuthContext, useAuth } from '../../context/AuthContext';
 
 type FormData = {
     firstName: string;
@@ -42,7 +42,7 @@ const schema = yup.object().shape({
         .oneOf([true], 'You must accept GDPR terms'),
 });
 
-const { onRegister } = useAuth();
+const authState = useContext(AuthContext)
 
 type InputField = {
     name: keyof FormData;
@@ -77,7 +77,7 @@ export default function SignUpForm() {
 
     const onSubmit = async (data: FormData) => {
         try {
-            await onRegister(data);
+            await authState.register(data);
         } catch (error) {
             console.error(error);
             Alert.alert('Sign up error', error.message || 'Unknown error');

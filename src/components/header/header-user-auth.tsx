@@ -3,21 +3,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useNavigation } from 'expo-router';
 import { headerStyles } from '../../styles/headerStyles';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ActionButton from '../buttons/action-button';
 import IconActionButton from '../buttons/icon-action-button';
 import { COLOR_STYLES } from '../../styles/constants/colors';
 import { DIMENSIONS } from '../../styles/constants/dimensions';
-import { useAuth } from '../../context/AuthContext';
+import { AuthContext, useAuth } from '../../context/AuthContext';
 
 type HeaderUserAuthProps = {
     onSignInPress: () => void;
 };
 
 export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
-    const { authState, onLogout } = useAuth();
+    const authState = useContext(AuthContext)
 
-    if (!authState.authenticated) {
+    if (!authState.state.authenticated) {
         return (
             <View>
                 <ActionButton title="Sign in" callback={onSignInPress} />
@@ -31,7 +31,7 @@ export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
                 iconName="person-circle-outline"
                 size={DIMENSIONS.sizes.interactives.width}
                 color={COLOR_STYLES.defaultTheme.colorInteractiveActive}
-                callback={onLogout}
+                callback={authState.logout}
             />
         </View>
     );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     View,
     Text,
@@ -15,7 +15,7 @@ import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
 import { loginUser } from '../../services/authService';
 import { Credentials } from '../../types/interface';
-import { useAuth } from '../../context/AuthContext';
+import { AuthContext, useAuth } from '../../context/AuthContext';
 
 type LoginFormData = {
     email: string;
@@ -26,9 +26,8 @@ const loginSchema = yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().required('Password is required'),
 });
-
-const { onLogin } = useAuth();
-console.log('AuthContext onLogin:', onLogin);
+const authState = useContext(AuthContext)
+console.log('AuthContext login:', authState.login);
 
 type InputField = {
     name: keyof LoginFormData;
@@ -55,7 +54,7 @@ export default function SignInForm() {
 
     const onSubmit = async (data: LoginFormData) => {
         try {
-            await onLogin(data);
+            await authState.login(data);
         } catch (error) {
             console.error(error);
             Alert.alert('Login error', error.message || 'Unknown error');
