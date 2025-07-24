@@ -27,9 +27,6 @@ const loginSchema = yup.object().shape({
     password: yup.string().required('Password is required'),
 });
 
-const { onLogin } = useAuth();
-console.log('AuthContext onLogin:', onLogin);
-
 type InputField = {
     name: keyof LoginFormData;
 } & Partial<TextInputProps>;
@@ -40,6 +37,7 @@ const inputs: InputField[] = [
 ];
 
 export default function SignInForm() {
+    const { onLogin } = useAuth();
     const {
         control,
         handleSubmit,

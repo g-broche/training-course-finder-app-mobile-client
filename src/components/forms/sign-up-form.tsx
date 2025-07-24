@@ -42,8 +42,6 @@ const schema = yup.object().shape({
         .oneOf([true], 'You must accept GDPR terms'),
 });
 
-const { onRegister } = useAuth();
-
 type InputField = {
     name: keyof FormData;
 } & Partial<TextInputProps>;
@@ -58,6 +56,8 @@ const inputs: InputField[] = [
 ];
 
 export default function SignUpForm() {
+    const { onRegister } = useAuth();
+
     const {
         control,
         handleSubmit,
