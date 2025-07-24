@@ -13,6 +13,9 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
+import { loginUser } from '../../services/authService';
+import { Credentials } from '../../types/interface';
+import { useAuth } from '../../context/AuthContext';
 
 type LoginFormData = {
     email: string;
@@ -23,6 +26,9 @@ const loginSchema = yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().required('Password is required'),
 });
+
+const { onLogin } = useAuth();
+console.log('AuthContext onLogin:', onLogin);
 
 type InputField = {
     name: keyof LoginFormData;
@@ -46,9 +52,14 @@ export default function SignInForm() {
         },
     });
 
-    const onSubmit = (data: LoginFormData) => {
-        Alert.alert('Login Info', JSON.stringify(data, null, 2));
-        // TODO: send data to backend API for authentication
+
+    const onSubmit = async (data: LoginFormData) => {
+        try {
+            await onLogin(data);
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Login error', error.message || 'Unknown error');
+        }
     };
 
     return (

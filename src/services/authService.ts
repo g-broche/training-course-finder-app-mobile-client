@@ -9,25 +9,26 @@ const ENDPOINTS = {
 }
 
 export const registerUser = async (payload: SignUpData) => {
-    console.log("request :", JSON.stringify(payload))
     const response = await request(ENDPOINTS.register, {
         method: 'POST',
         body: JSON.stringify(payload),
     });
-    console.log("got response")
     if (!response.success) {
-        console.log("Error response : " + response.message);
+        console.log(`Error : ${response.message || "an unexpected error occured during signup"}`);
     }
-    const token = await response.data.jwt;
-    console.log("token received : " + token)
-    await SecureStore.setItemAsync('jwt', token);
+    return await response.data.jwt;
+
 }
 
 export const loginUser = async (credentials: Credentials) => {
-    return request(ENDPOINTS.login, {
+    const response = await request(ENDPOINTS.login, {
         method: 'POST',
         body: JSON.stringify(credentials),
     });
+    if (!response.success) {
+        console.log(`Error : ${response.message || "an unexpected error occured during signin"}`);
+    }
+    return await response.data.jwt;
 }
 
 export const getToken = async (): Promise<string | null> => {

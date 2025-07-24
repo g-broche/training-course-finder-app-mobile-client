@@ -1,18 +1,15 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { useNavigation } from 'expo-router';
+import { View, Text } from 'react-native';
 import { headerStyles } from '../../styles/headerStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { containerStyles } from '../../styles/containerStyles';
-import { DIMENSIONS } from '../../styles/constants/dimensions';
-import { COLOR_STYLES } from '../../styles/constants/colors';
 import HeaderUserAuth from './header-user-auth';
 import Burger from './burger';
 
 type AppHeaderProps = {
     onSignInPress: () => void;
 };
+
+
 
 export default function AppHeader({ onSignInPress }: AppHeaderProps) {
     return (

@@ -8,6 +8,8 @@ import * as NavigationBar from 'expo-navigation-bar';
 import * as SystemUI from 'expo-system-ui';
 import { DIMENSIONS } from '../src/styles/constants/dimensions';
 import { Platform, View } from 'react-native';
+import { AuthProvider } from '../src/context/AuthContext';
+import { Slot } from 'expo-router';
 
 export default function RootLayout() {
     useEffect(() => {
@@ -18,21 +20,24 @@ export default function RootLayout() {
     }, []);
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary }}>
-            <StatusBar style="light" />
+        <AuthProvider>
             <SafeAreaProvider>
-                <Drawer
-                    screenOptions={{
-                        headerShown: false,
-                        drawerStyle: {
-                            width: DIMENSIONS.sizes.drawer.width,
-                            backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
-                        },
-                    }}
-                    drawerContent={(props) => <CustomDrawerContent {...props} />}
-                >
-                </Drawer>
-            </SafeAreaProvider>
-        </View>
+                <View style={{ flex: 1, backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary }}>
+                    <StatusBar style="light" />
+                    <Drawer
+                        screenOptions={{
+                            headerShown: false,
+                            drawerStyle: {
+                                width: DIMENSIONS.sizes.drawer.width,
+                                backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
+                            },
+                        }}
+                        drawerContent={(props) => <CustomDrawerContent {...props} />}
+                    >
+                        <Slot />
+                    </Drawer>
+                </View>
+            </SafeAreaProvider >
+        </AuthProvider>
     );
 }

@@ -15,6 +15,7 @@ import { textStyles } from '../../styles/textStyles';
 import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
 import { getToken, getUserFromToken, registerUser } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 
 type FormData = {
     firstName: string;
@@ -40,6 +41,8 @@ const schema = yup.object().shape({
         .bool()
         .oneOf([true], 'You must accept GDPR terms'),
 });
+
+const { onRegister } = useAuth();
 
 type InputField = {
     name: keyof FormData;
@@ -74,15 +77,11 @@ export default function SignUpForm() {
 
     const onSubmit = async (data: FormData) => {
         try {
-            console.log("form data:", data)
-            const token = await registerUser(data);
-            console.log(getToken());
-            console.log("user from token:", getUserFromToken());
+            await onRegister(data);
         } catch (error) {
-            console.log(error)
-            Alert.alert('Sign up error', error);
+            console.error(error);
+            Alert.alert('Sign up error', error.message || 'Unknown error');
         }
-
     };
 
     return (
