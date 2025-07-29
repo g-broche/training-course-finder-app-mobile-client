@@ -35,8 +35,6 @@ export default function RootLayout() {
                         drawerContent={(props) => <CustomDrawerContent {...props} />}
                     >
                         <Slot />
-
-
                     </Drawer>
                 </View>
             </SafeAreaProvider >

@@ -2,15 +2,15 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { COLOR_STYLES } from '../../styles/constants/colors';
-import { User } from '../../types/interface';
 import { getUserFromToken } from '../../services/authService';
 import { DIMENSIONS } from '../../styles/constants/dimensions';
 import { FONT_STYLES } from '../../styles/constants/fonts';
 import { buttonStyles } from '../../styles/buttonStyles';
 import DangerButton from '../buttons/danger-button';
+import { LoggedUser } from '../../types/dto';
 
 export default function UserDetailDropdown({ onLogout }: { onLogout: () => void }) {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<LoggedUser | null>(null);
 
     useEffect(() => {
         const fetchUser = async () => {

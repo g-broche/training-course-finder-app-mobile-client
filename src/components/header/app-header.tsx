@@ -13,7 +13,7 @@ type AppHeaderProps = {
 
 export default function AppHeader({ onSignInPress }: AppHeaderProps) {
     return (
-        <SafeAreaView style={containerStyles.viewContainer}>
+        <SafeAreaView style={containerStyles.headerContainer}>
             <View style={headerStyles.container}>
                 {/* Your Burger menu */}
                 <Burger />

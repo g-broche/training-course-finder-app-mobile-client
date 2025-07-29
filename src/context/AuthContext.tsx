@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { Credentials, SignUpData } from '../types/interface';
 import { loginUser, registerUser } from '../services/authService';
 import axios from 'axios';
+import { Credentials, SignUpData } from '../types/request';
 
 
 interface AuthProps {

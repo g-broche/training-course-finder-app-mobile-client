@@ -8,6 +8,14 @@ export const DIMENSIONS = {
         },
         interactives: {
             width: 36
+        },
+        media: {
+            height: 300,
+        },
+        input: {
+            area: {
+                height: 100
+            }
         }
     },
     spacings: {
