@@ -8,6 +8,14 @@ export const DIMENSIONS = {
         },
         interactives: {
             width: 36
+        },
+        media: {
+            height: 300,
+        },
+        input: {
+            area: {
+                height: 100
+            }
         }
     },
     spacings: {
@@ -32,9 +40,9 @@ export const DIMENSIONS = {
             paddingHorizontal: 12,
         },
         gaps: {
-            xxl: 24,
-            xl: 16,
-            l: 12,
+            xxl: 36,
+            xl: 24,
+            l: 16,
             m: 8,
             s: 4,
         }

@@ -5,6 +5,11 @@ import { DIMENSIONS } from "./constants/dimensions";
 export const containerStyles = StyleSheet.create({
     viewContainer: {
         flex: 1,
+        width: '100%',
+    },
+    headerContainer: {
+        flex: 1,
+        width: '100%',
         backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
     },
     main: {
@@ -15,6 +20,7 @@ export const containerStyles = StyleSheet.create({
         paddingRight: DIMENSIONS.spacings.main.paddings.paddingRight,
         backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
         flex: 1,
+        width: '100%',
         flexDirection: "column",
         justifyContent: "flex-start",
         alignItems: "center",

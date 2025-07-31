@@ -4,17 +4,14 @@ import {
     Text,
     TextInput,
     Pressable,
-    StyleSheet,
     Alert,
     TextInputProps,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { textStyles } from '../../styles/textStyles';
 import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
-import { getToken, getUserFromToken, registerUser } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 
 type FormData = {
@@ -28,9 +25,21 @@ type FormData = {
 };
 
 const schema = yup.object().shape({
-    firstName: yup.string().required('First name is required'),
-    lastName: yup.string().required('Last name is required'),
-    displayName: yup.string().required('Display name is required'),
+    firstName: yup
+        .string()
+        .required('First name is required')
+        .min(1, 'First name must be at least 1 characters')
+        .max(30, 'First name cannot exceed 30 characters'),
+    lastName: yup
+        .string()
+        .required('Last name is required')
+        .min(1, 'Last name must be at least 1 characters')
+        .max(30, 'Last name cannot exceed 30 characters'),
+    displayName: yup
+        .string()
+        .required('Display name is required')
+        .min(1, 'Display name must be at least 1 characters')
+        .max(30, 'Display name cannot exceed 30 characters'),
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
     passwordConfirm: yup

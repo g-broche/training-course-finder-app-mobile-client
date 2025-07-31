@@ -13,8 +13,6 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
-import { loginUser } from '../../services/authService';
-import { Credentials } from '../../types/interface';
 import { useAuth } from '../../context/AuthContext';
 
 type LoginFormData = {

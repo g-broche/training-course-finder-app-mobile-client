@@ -1,9 +1,5 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { useNavigation } from 'expo-router';
-import { headerStyles } from '../../styles/headerStyles';
-import { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { useState } from 'react';
 import ActionButton from '../buttons/action-button';
 import IconActionButton from '../buttons/icon-action-button';
 import { COLOR_STYLES } from '../../styles/constants/colors';

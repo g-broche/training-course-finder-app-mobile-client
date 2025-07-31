@@ -1,7 +1,8 @@
 import { jwtDecode } from "jwt-decode";
-import { Credentials, SignUpData, User } from "../types/interface";
 import { request } from "./base-api-service";
 import * as SecureStore from 'expo-secure-store';
+import { Credentials, SignUpData } from "../types/request";
+import { LoggedUser } from "../types/dto";
 
 const ENDPOINTS = {
     register: '/auth/signup',
@@ -35,13 +36,13 @@ export const getToken = async (): Promise<string | null> => {
     return await SecureStore.getItemAsync('jwt');
 };
 
-export const getUserFromToken = async (): Promise<User | null> => {
+export const getUserFromToken = async (): Promise<LoggedUser | null> => {
     const token = await getToken();
     if (!token) return null;
 
     try {
         const decoded: any = jwtDecode(token);
-        const user: User = {
+        const user: LoggedUser = {
             uuid: decoded.uuid,
             email: decoded.sub,
             roles: decoded.roles,
