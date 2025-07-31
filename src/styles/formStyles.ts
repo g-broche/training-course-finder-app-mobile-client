@@ -6,10 +6,15 @@ import { FONT_STYLES } from "./constants/fonts";
 export const formStyles = StyleSheet.create({
     container: {
         padding: DIMENSIONS.spacings.modal.padding,
-        gap: DIMENSIONS.spacings.gaps.xxl,
+        width: '100%',
         flexGrow: 1,
+        gap: DIMENSIONS.spacings.gaps.xxl,
     },
     formGroup: {
+        gap: DIMENSIONS.spacings.gaps.s,
+    },
+    formGroupMedia: {
+        marginVertical: DIMENSIONS.spacings.gaps.xxl,
         gap: DIMENSIONS.spacings.gaps.s,
     },
     dropdown: {

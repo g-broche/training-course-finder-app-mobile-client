@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, ScrollView, Alert } from 'react-native';
+import { Button, ScrollView, Alert, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,11 +16,21 @@ import { FormGroupDate } from './form-group-date';
 import { FormGroupImageSelector } from './form-group-image-selector';
 import { FormGroupMapSelector } from './form-group-map';
 import { FoundItemRequest } from '../../types/request';
-import { createNewFoundAnnounce, testNewFoundAnnounceBody } from '../../services/announceService';
+import * as FileSystem from 'expo-file-system';
+import { createNewFoundAnnounce } from '../../services/announceService';
+import { useAuth } from '../../context/AuthContext';
 
 const schema = yup.object().shape({
-    title: yup.string().required(),
-    description: yup.string().required(),
+    title: yup
+        .string()
+        .required('Title is required')
+        .min(5, 'Title must be at least 5 characters')
+        .max(50, 'Title cannot exceed 50 characters'),
+    description: yup
+        .string()
+        .required('Title is required')
+        .min(30, 'Description must be at least 5 characters')
+        .max(1000, 'Description cannot exceed 50 characters'),
     image: yup
         .mixed<File>()
         .required('Photo is required')
@@ -39,11 +49,12 @@ const schema = yup.object().shape({
     longitude: yup.number().required(),
     city: yup.string().required(),
     country: yup.string().required(),
-    relevantDate: yup.date().required(),
+    relevantDate: yup.date().required().max(new Date(), 'Date cannot be in the future'),
     categoryId: yup.number().required(),
 });
 
 export default function FoundItemForm() {
+    const { authState } = useAuth();
     const [categories, setCategories] = useState([]);
 
     const {
@@ -94,10 +105,6 @@ export default function FoundItemForm() {
                 setValue('country', place.country || '');
             }
 
-            console.log('>>> Reverse geocode : lat = ', lat);
-            console.log('>>> Reverse geocode : lon = ', lng);
-            console.log('>>> Reverse geocode : city = ', place.city);
-            console.log('>>> Reverse geocode : country = ', place.country);
         } catch (err) {
             console.log('Reverse geocode error:', err);
         }
@@ -105,29 +112,22 @@ export default function FoundItemForm() {
 
 
     const onSubmit = async (data) => {
+        if (!authState?.token) {
+            Alert.alert("Unauthorized", "You must be logged in to submit.");
+            return;
+        }
         const formData = new FormData();
 
-        // Append text fields
-        formData.append("title", data.title);
-        formData.append("description", data.description);
-        formData.append("latitude", String(data.latitude));
-        formData.append("longitude", String(data.longitude));
-        formData.append("city", data.city);
-        formData.append("country", data.country);
-        formData.append("relevantDate", data.relevantDate.toISOString().split('T')[0]);
-        formData.append("categoryId", String(data.categoryId));
 
-        const imageFile = {
+        const image = {
             uri: data.image.uri,
-            type: data.image.type || 'image/jpeg',
-            name: data.image.name || 'image.jpg',
-        };
-
-        formData.append("image", imageFile);
+            type: data.image.type,
+            name: data.image.name,
+        }
 
         try {
-            const newAnnounceResult = await createNewFoundAnnounce(formData);
-            Alert.alert('Success', 'Item submitted successfully!');
+            const newAnnounceResult = await createNewFoundAnnounce(data, image, authState.token);
+
             console.log(newAnnounceResult);
         } catch (err) {
             console.log('Full error:', err);
@@ -142,61 +142,59 @@ export default function FoundItemForm() {
     }, []);
 
     return (
-        <SafeAreaView style={containerStyles.viewContainer}>
-            <ScrollView contentContainerStyle={formStyles.container}>
-                <FormGroupInput
-                    name="title"
-                    label="Announce title"
-                    placeholder='Enter announce title'
-                    control={control}
-                    errors={errors}
-                />
+        <View style={formStyles.container}>
+            <FormGroupInput
+                name="title"
+                label="Announce title"
+                placeholder='Enter announce title'
+                control={control}
+                errors={errors}
+            />
 
-                <FormGroupArea
-                    name="description"
-                    label="Description"
-                    placeholder='Enter informations related to the item and its discovery'
-                    control={control}
-                    errors={errors}
-                />
+            <FormGroupArea
+                name="description"
+                label="Description"
+                placeholder='Enter informations related to the item and its discovery'
+                control={control}
+                errors={errors}
+            />
 
-                <FormGroupDate
-                    name="relevantDate"
-                    control={control}
-                    errors={errors}
-                    ERROR={'Field must be a Date'}
-                />
+            <FormGroupDate
+                name="relevantDate"
+                control={control}
+                errors={errors}
+                ERROR={'Field must be a Date'}
+            />
 
-                <FormGroupImageSelector
-                    name="image"
-                    control={control}
-                    errors={errors}
-                    buttonTitle="Select photo of item"
-                />
+            <FormGroupImageSelector
+                name="image"
+                control={control}
+                errors={errors}
+                buttonTitle="Select photo of item"
+            />
 
-                <FormGroupDropdown
-                    name="categoryId"
-                    label="Category"
-                    placeholder="Select category..."
-                    control={control}
-                    errors={errors}
-                    options={categories.map((cat) => ({
-                        label: cat.name,
-                        value: cat.id,
-                    }))}
-                />
+            <FormGroupDropdown
+                name="categoryId"
+                label="Category"
+                placeholder="Select category..."
+                control={control}
+                errors={errors}
+                options={categories.map((cat) => ({
+                    label: cat.name,
+                    value: cat.id,
+                }))}
+            />
 
-                <FormGroupMapSelector
-                    control={control}
-                    errors={errors}
-                    setValue={setValue}
-                    reverseGeocode={reverseGeocode}
-                    latField="latitude"
-                    lngField="longitude"
-                />
+            <FormGroupMapSelector
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                reverseGeocode={reverseGeocode}
+                latField="latitude"
+                lngField="longitude"
+            />
 
-                <Button title="Submit" onPress={handleSubmit(onSubmit)} />
-            </ScrollView>
-        </SafeAreaView>
+            <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+        </View>
     );
 }

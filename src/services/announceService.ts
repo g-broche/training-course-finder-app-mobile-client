@@ -1,19 +1,32 @@
 import { ApiResponse } from "../types/api-interface";
-import { Announce, Category } from "../types/dto";
+import { Image } from "../types/app";
+import { Announce } from "../types/dto";
 import { FoundItemRequest } from "../types/request";
-import { axiosPostRequest, axiosPostRequestWithMultipartForm, request } from "./base-api-service";
-import axios from 'axios';
+import { buildUrl, uploadMultipart } from "./base-api-service";
 
 const ENDPOINTS = {
     newFoundAnnounce: '/announces/found/new',
-    test: '/announces/test',
 }
 
-export const createNewFoundAnnounce = async (requestData: FormData): Promise<Announce> => {
-    const response = await axiosPostRequestWithMultipartForm(ENDPOINTS.newFoundAnnounce, requestData)
-    return await response.data;
-}
+export const createNewFoundAnnounce = async (data: FoundItemRequest, image: Image, userToken: string): Promise<Announce> => {
+    const fields = {
+        title: data.title,
+        description: data.description,
+        latitude: String(data.latitude),
+        longitude: String(data.longitude),
+        city: data.city,
+        country: data.country,
+        relevantDate: data.relevantDate.toISOString().split('T')[0],
+        categoryId: String(data.categoryId),
+    }
 
-export const testNewFoundAnnounceBody = async (requestData: string): Promise<void> => {
-    const response = await axiosPostRequest(ENDPOINTS.test, requestData);
+    const response = await uploadMultipart({
+        url: buildUrl(ENDPOINTS.newFoundAnnounce),
+        image: image,
+        fields: fields,
+        token: userToken,
+        fieldName: "image"
+    });
+    const responseBody = JSON.parse(response.body) as ApiResponse;
+    return await responseBody.data
 }

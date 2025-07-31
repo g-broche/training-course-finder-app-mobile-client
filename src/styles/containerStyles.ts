@@ -20,6 +20,7 @@ export const containerStyles = StyleSheet.create({
         paddingRight: DIMENSIONS.spacings.main.paddings.paddingRight,
         backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
         flex: 1,
+        width: '100%',
         flexDirection: "column",
         justifyContent: "flex-start",
         alignItems: "center",

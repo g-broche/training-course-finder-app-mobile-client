@@ -35,10 +35,12 @@ export function FormGroupImageSelector<T, K extends Path<T> = Path<T>>({
         if (!result.canceled && result.assets.length > 0) {
             const asset = result.assets[0];
 
+            console.log("image when selected: ", asset)
+
             const file: File = {
                 uri: asset.uri,
                 name: asset.fileName ?? 'photo.jpg',
-                type: asset.type ?? 'image/jpeg',
+                type: asset.mimeType ?? 'image/jpeg',
             } as any;
 
             setImagePreview(asset.uri);
@@ -47,7 +49,7 @@ export function FormGroupImageSelector<T, K extends Path<T> = Path<T>>({
     };
 
     return (
-        <View style={formStyles.formGroup}>
+        <View style={formStyles.formGroupMedia}>
             <Controller
                 control={control}
                 name={name}
