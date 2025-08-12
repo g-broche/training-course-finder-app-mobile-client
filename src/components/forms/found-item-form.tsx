@@ -19,6 +19,8 @@ import { FoundItemRequest } from '../../types/request';
 import * as FileSystem from 'expo-file-system';
 import { createNewFoundAnnounce } from '../../services/announceService';
 import { useAuth } from '../../context/AuthContext';
+import { endOfToday } from 'date-fns';
+
 
 const schema = yup.object().shape({
     title: yup
@@ -49,7 +51,7 @@ const schema = yup.object().shape({
     longitude: yup.number().required(),
     city: yup.string().required(),
     country: yup.string().required(),
-    relevantDate: yup.date().required().max(new Date(), 'Date cannot be in the future'),
+    relevantDate: yup.date().required().max(endOfToday(), 'Date cannot be in the future'),
     categoryId: yup.number().required(),
 });
 

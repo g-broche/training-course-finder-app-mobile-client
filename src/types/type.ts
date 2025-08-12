@@ -1,1 +1,5 @@
-export type Data = any
+export type ApiData = any
+
+export type AnnounceType = "lost" | "found"
+export type AnnounceStatus = "solved" | "unsolved"
+export type InteractivityState = "open" | "close"

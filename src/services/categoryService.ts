@@ -3,7 +3,7 @@ import { Category } from "../types/dto";
 import { request } from "./base-api-service";
 
 const ENDPOINTS = {
-    list: '/categories',
+    list: '/api/categories',
 }
 
 export const getAllCategories = async (): Promise<Category[]> => {
