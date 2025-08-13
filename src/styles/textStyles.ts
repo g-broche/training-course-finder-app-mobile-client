@@ -37,5 +37,11 @@ export const textStyles = StyleSheet.create({
         color: COLOR_STYLES.defaultTheme.colorTertiary,
         fontWeight: FONT_STYLES.weight.regular,
         fontSize: FONT_STYLES.sizes.m
+    },
+    metadata: {
+        color: COLOR_STYLES.defaultTheme.colorTertiary,
+        fontWeight: FONT_STYLES.weight.regular,
+        fontStyle: "italic",
+        fontSize: FONT_STYLES.sizes.s
     }
 });

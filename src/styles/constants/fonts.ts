@@ -5,7 +5,8 @@ export const FONT_STYLES = {
         xxl: 32,
         xl: 24,
         l: 20,
-        m: 16
+        m: 16,
+        s: 14,
     },
     weight: {
         regular: 400 as Weight,

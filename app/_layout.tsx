@@ -9,7 +9,11 @@ import * as SystemUI from 'expo-system-ui';
 import { DIMENSIONS } from '../src/styles/constants/dimensions';
 import { Platform, View } from 'react-native';
 import { AuthProvider } from '../src/context/AuthContext';
-import { Slot, Tabs } from 'expo-router';
+import { Slot } from 'expo-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
 
 export default function RootLayout() {
     useEffect(() => {
@@ -43,7 +47,9 @@ export default function RootLayout() {
 
     return (
         <AuthProvider>
-            <Content />
+            <QueryClientProvider client={queryClient}>
+                <Content />
+            </QueryClientProvider>
         </AuthProvider>
     );
 }

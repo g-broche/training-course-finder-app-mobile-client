@@ -5,8 +5,8 @@ import { Credentials, SignUpData } from "../types/request";
 import { LoggedUser } from "../types/dto";
 
 const ENDPOINTS = {
-    register: '/auth/signup',
-    login: '/auth/signin'
+    register: '/api/auth/signup',
+    login: '/api/auth/signin'
 }
 
 export const registerUser = async (payload: SignUpData) => {

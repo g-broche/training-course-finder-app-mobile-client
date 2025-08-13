@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { COLOR_STYLES } from "./constants/colors";
 import { DIMENSIONS } from "./constants/dimensions";
 
@@ -6,6 +6,14 @@ export const containerStyles = StyleSheet.create({
     viewContainer: {
         flex: 1,
         width: '100%',
+    },
+    inlineContainer: {
+        flex: 1,
+        width: '95%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 8,
     },
     headerContainer: {
         flex: 1,
@@ -25,5 +33,23 @@ export const containerStyles = StyleSheet.create({
         justifyContent: "flex-start",
         alignItems: "center",
         gap: DIMENSIONS.spacings.gaps.xl
+    },
+    grid: {
+        width: '100%',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        rowGap: DIMENSIONS.spacings.gaps.l,
+    },
+    card: {
+        flex: 1,
+        borderRadius: DIMENSIONS.borderRadius.l,
+        borderColor: COLOR_STYLES.defaultTheme.colorInteractiveActive,
+        borderWidth: 1,
+        minWidth: '48%',
+        maxWidth: '48%',
+        height: 'auto',
+        padding: DIMENSIONS.spacings.gaps.l,
+        gap: DIMENSIONS.spacings.gaps.s
     },
 });

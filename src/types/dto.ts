@@ -1,3 +1,5 @@
+import { AnnounceStatus, AnnounceType, InteractivityState } from "./type";
+
 export interface LoggedUser {
     uuid: string,
     email: string,
@@ -23,17 +25,16 @@ export interface Announce {
     id: string;
     title: string;
     description: string;
-    photo: string;
+    photo: string | null;
     city: string;
     country: string;
     latitude: string;
     longitude: string;
     relevantDate: string; // ISO format (e.g., '2025-07-23')
-    type: string;
+    type: AnnounceType;
     author: OtherUser;
-    interactivityState: string;
-    recordStatus: string;
-    status: string;
+    interactivityState: InteractivityState;
+    status: AnnounceStatus;
     category: string;
     createdAt: string; // ISO timestamp (e.g., '2025-07-23T14:35:00Z')
     editedAt: string;

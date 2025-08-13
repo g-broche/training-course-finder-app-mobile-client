@@ -7,6 +7,11 @@ export const mediaStyles = StyleSheet.create({
         width: '100%',
         height: DIMENSIONS.sizes.media.height,
     },
+    thumbnail: {
+        width: '100%',
+        aspectRatio: 1,
+        resizeMode: 'cover'
+    },
     map: {
         marginVertical: DIMENSIONS.spacings.gaps.l,
         height: DIMENSIONS.sizes.media.height,
