@@ -7,6 +7,14 @@ export const containerStyles = StyleSheet.create({
         flex: 1,
         width: '100%',
     },
+    inlineContainer: {
+        flex: 1,
+        width: '95%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 8,
+    },
     headerContainer: {
         flex: 1,
         width: '100%',

@@ -2,6 +2,7 @@ import { FlatList, View } from "react-native"
 import { Announce } from "../../types/dto"
 import AnnounceCard from "./announce-card"
 import { containerStyles } from "../../styles/containerStyles"
+import Paginator from "../paginator"
 
 type Props = {
     announces: Announce[]

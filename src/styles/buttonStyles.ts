@@ -30,7 +30,7 @@ export const buttonStyles = StyleSheet.create({
         textAlign: "center"
     },
     icon: {
-        backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
+        // backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
         alignItems: 'center',
         justifyContent: 'center',
     }

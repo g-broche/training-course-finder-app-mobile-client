@@ -18,8 +18,9 @@ export const request = async <T>(
     options?: RequestInit,
     params?: Record<string, string | number>
 ): Promise<ApiResponse> => {
-    console.log("api call:", buildUrl(url, params));
-    const res = await fetch(buildUrl(url), {
+    const builtApiRequest = buildUrl(url, params);
+    console.log("api call:", builtApiRequest);
+    const res = await fetch(builtApiRequest, {
         headers: { 'Content-Type': 'application/json' },
         ...options,
     });
