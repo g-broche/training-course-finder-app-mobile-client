@@ -24,3 +24,8 @@ export interface FoundItemRequest {
     relevantDate: Date;
     categoryId: number | undefined;
 };
+
+export interface SearchAnnounceFilter {
+    search?: string;
+    categoryId?: number | undefined;
+};

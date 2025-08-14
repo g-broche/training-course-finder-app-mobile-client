@@ -8,16 +8,23 @@ import { getPaginatedFoundAnnounce } from "../../../src/services/announceService
 import { Announce } from "../../../src/types/dto";
 import AnnounceGrid from "../../../src/components/announces/announce-grid";
 import Paginator from "../../../src/components/paginator";
+import AnnounceFilterForm from "../../../src/components/forms/announce-filter-form";
+import { SearchAnnounceFilter } from "../../../src/types/request";
 
 export default function foundIndex() {
     const [currentPage, setCurrentPage] = useState(0);
+    const [filter, setFilter] = useState({})
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['found-announces', currentPage],
-        queryFn: () => getPaginatedFoundAnnounce(currentPage),
+        queryFn: () => getPaginatedFoundAnnounce(currentPage, filter),
         staleTime: 0,
         gcTime: 0,
         refetchOnMount: 'always',
     });
+    const updateSearch = (filter: SearchAnnounceFilter) => {
+        setCurrentPage(0);
+        setFilter(filter);
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -28,6 +35,7 @@ export default function foundIndex() {
                     {isError && <Text>Error: {String(error)}</Text>}
                     {!isLoading && data?.content && (
                         <>
+                            <AnnounceFilterForm onFilterSubmit={(filter) => updateSearch(filter)} />
                             <AnnounceGrid announces={data.content} />
                             <Paginator
                                 currentPage={currentPage}
