@@ -39,7 +39,7 @@ export function FormGroupDropdown<T, K extends Path<T>>({
                 name={name}
                 render={({ field: { onChange, value } }) => (
                     <Picker style={formStyles.dropdown} selectedValue={value} onValueChange={onChange}>
-                        <Picker.Item label={placeholder} value={undefined} />
+                        <Picker.Item label={placeholder} value={0} />
                         {options.map((opt) => (
                             <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
                         ))}

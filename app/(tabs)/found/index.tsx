@@ -15,7 +15,7 @@ export default function foundIndex() {
     const [currentPage, setCurrentPage] = useState(0);
     const [filter, setFilter] = useState({})
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['found-announces', currentPage],
+        queryKey: ['found-announces', currentPage, filter],
         queryFn: () => getPaginatedFoundAnnounce(currentPage, filter),
         staleTime: 0,
         gcTime: 0,
@@ -31,17 +31,19 @@ export default function foundIndex() {
                 <View style={containerStyles.main}>
                     <ViewTitle title="Found items" />
                     <NavigationButton title="Report found item" pathname="/found/submit"></NavigationButton>
+                    <AnnounceFilterForm onFilterSubmit={(filter) => updateSearch(filter)} />
                     {isLoading && <ActivityIndicator />}
                     {isError && <Text>Error: {String(error)}</Text>}
                     {!isLoading && data?.content && (
                         <>
-                            <AnnounceFilterForm onFilterSubmit={(filter) => updateSearch(filter)} />
                             <AnnounceGrid announces={data.content} />
-                            <Paginator
-                                currentPage={currentPage}
-                                totalPages={data.totalPages}
-                                onPageChange={(pageIndex) => setCurrentPage(pageIndex)}
-                            />
+                            {data.totalPages && data.totalPages > 1 && (
+                                <Paginator
+                                    currentPage={currentPage}
+                                    totalPages={data.totalPages}
+                                    onPageChange={(pageIndex) => setCurrentPage(pageIndex)}
+                                />
+                            )}
                         </>
                     )
                     }

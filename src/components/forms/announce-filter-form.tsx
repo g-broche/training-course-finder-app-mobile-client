@@ -51,6 +51,7 @@ export default function AnnounceFilterForm({ onFilterSubmit }: AnnounceFilterFor
     };
 
     const onSubmit = async (data: SearchAnnounceFilter) => {
+        console.log("filters on click", data)
         const filter = formatFilterFromForm(data)
         onFilterSubmit(filter);
     };
@@ -74,7 +75,7 @@ export default function AnnounceFilterForm({ onFilterSubmit }: AnnounceFilterFor
                 <FormGroupDropdown
                     name="categoryId"
                     label="Category"
-                    placeholder="Select optional category"
+                    placeholder="All categories"
                     control={control}
                     errors={errors}
                     options={categories.map((cat) => ({
@@ -86,6 +87,5 @@ export default function AnnounceFilterForm({ onFilterSubmit }: AnnounceFilterFor
                 <Button title="Filter" onPress={handleSubmit(onSubmit)} />
             </View>
         </View>
-
     );
 }

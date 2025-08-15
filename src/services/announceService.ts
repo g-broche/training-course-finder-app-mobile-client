@@ -11,14 +11,15 @@ const ENDPOINTS = {
 }
 
 export const formatFilterFromForm = (filter: SearchAnnounceFilter = {}) => {
+    console.log("raw filter value", filter)
     const searchIsValid = typeof filter.search === "string" && filter.search.length > 0;
     const categoryIsValid = typeof filter.categoryId === "number"
         && Number.isInteger(filter.categoryId)
         && filter.categoryId > 0;
     if (!searchIsValid && !categoryIsValid) { return {} }
-    if (!categoryIsValid) { return { seach: filter.search } }
+    if (!categoryIsValid) { return { search: filter.search } }
     return {
-        seach: filter.search,
+        search: filter.search,
         categoryId: filter.categoryId
     }
 }
