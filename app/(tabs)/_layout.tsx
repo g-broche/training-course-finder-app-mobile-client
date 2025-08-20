@@ -1,10 +1,7 @@
-import { Tabs } from 'expo-router';
+import { Stack, Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, View, Text, ScrollView } from 'react-native';
-import { useNavigation } from 'expo-router';
-import type { DrawerNavigationProp } from '@react-navigation/drawer';
+import { Pressable, Text, ScrollView } from 'react-native';
 import { COLOR_STYLES } from '../../src/styles/constants/colors';
-// import CustomHeader from '../../src/components/header/app-header';
 import AppHeader from '../../src/components/header/app-header';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
@@ -46,21 +43,21 @@ export default function TabsLayout() {
                 }}
             >
                 <Tabs.Screen
-                    name="home"
+                    name="index"
                     options={{
                         title: 'Home',
                         tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />
                     }}
                 />
                 <Tabs.Screen
-                    name="found"
+                    name="announces/found"
                     options={{
                         title: 'Found',
                         tabBarIcon: ({ color, size }) => <Ionicons name="flag" size={size} color={color} />
                     }}
                 />
                 <Tabs.Screen
-                    name="lost"
+                    name="announces/lost"
                     options={{
                         title: 'Lost',
                         tabBarIcon: ({ color, size }) => <Ionicons name="search" size={size} color={color} />

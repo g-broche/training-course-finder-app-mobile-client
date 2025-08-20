@@ -1,10 +1,11 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
 import { Announce } from "../../types/dto";
 import { mediaStyles } from "../../styles/mediaStyles";
 import { isAnnounceTypeFound, isImageIncludedInAnnounce } from "../../utils/dtoUtil";
 import { containerStyles } from "../../styles/containerStyles";
 import { textStyles } from "../../styles/textStyles";
 import { formatDate } from "../../utils/pipe";
+import { Link } from "expo-router";
 
 type Props = {
     announce: Announce;
@@ -15,6 +16,18 @@ const renderHeader = (announce: Announce) => {
         ? `Reported found : ${formatDate(announce.createdAt)}`
         : `Reported lost : ${formatDate(announce.createdAt)}`;
     return <Text style={textStyles.metadata}>{content}</Text>
+}
+
+const isAnnounceForFoundObject = (announce: Announce) => {
+    return announce.type === "found";
+}
+
+const getRedirectionLinkPathForAnnounce = (announce: Announce) => {
+
+    const path = isAnnounceForFoundObject(announce)
+        ? `/announces/found/${announce.id}`
+        : `/announces/lost/${announce.id}`;
+    return path;
 }
 
 const renderPhotoOrDescription = (announce: Announce) => {
@@ -31,11 +44,13 @@ const renderPhotoOrDescription = (announce: Announce) => {
 
 export default function AnnounceCard({ announce }: Props) {
     return (
-        <View style={containerStyles.card}>
-            {renderHeader(announce)}
-            <Text style={textStyles.default}>{announce.title}</Text>
-            {renderPhotoOrDescription(announce)}
-            <Text style={textStyles.default}>{`Location : ${announce.city} (${announce.country})`}</Text>
-        </View>
+        <Link href={getRedirectionLinkPathForAnnounce(announce)} asChild>
+            <Pressable style={containerStyles.card}>
+                {renderHeader(announce)}
+                <Text style={textStyles.default}>{announce.title}</Text>
+                {renderPhotoOrDescription(announce)}
+                <Text style={textStyles.default}>{`Location : ${announce.city} (${announce.country})`}</Text>
+            </Pressable>
+        </Link>
     );
 }
