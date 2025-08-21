@@ -6,6 +6,7 @@ import { FoundItemRequest, SearchAnnounceFilter } from "../types/request";
 import { buildUrl, request, uploadMultipart } from "./base-api-service";
 
 const ENDPOINTS = {
+    announceDetails: '/api/announces/',
     listFoundAnnounce: '/api/announces/found/paginated',
     newFoundAnnounce: '/api/announces/found/new',
 }
@@ -62,6 +63,18 @@ export const getPaginatedFoundAnnounce = async (page: number, filter: SearchAnno
     );
     if (!response.success) {
         throw new Error(response.message || 'Failed to retrieve found announces');
+    }
+    return await response.data;
+}
+
+export const getAnnounceDetails = async (id: string) => {
+    const requestUri = `${ENDPOINTS.announceDetails}${id}`
+    const response = await request(
+        requestUri,
+        { method: 'GET' }
+    );
+    if (!response.success) {
+        throw new Error(response.message || 'Failed to retrieve announce data');
     }
     return await response.data;
 }

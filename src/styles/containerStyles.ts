@@ -34,6 +34,14 @@ export const containerStyles = StyleSheet.create({
         alignItems: "center",
         gap: DIMENSIONS.spacings.gaps.xl
     },
+    announceDetail: {
+        flex: 1,
+        width: '100%',
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: DIMENSIONS.spacings.gaps.l
+    },
     grid: {
         width: '100%',
         flexDirection: 'row',

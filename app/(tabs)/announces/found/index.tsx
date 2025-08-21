@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { ActivityIndicator, SafeAreaView, ScrollView, View, Text } from "react-native";
-import { containerStyles } from "../../../src/styles/containerStyles";
-import ViewTitle from "../../../src/components/view-title";
-import NavigationButton from "../../../src/components/buttons/navigation-button";
 import { useQuery } from "@tanstack/react-query";
-import { getPaginatedFoundAnnounce } from "../../../src/services/announceService";
-import { Announce } from "../../../src/types/dto";
-import AnnounceGrid from "../../../src/components/announces/announce-grid";
-import Paginator from "../../../src/components/paginator";
-import AnnounceFilterForm from "../../../src/components/forms/announce-filter-form";
-import { SearchAnnounceFilter } from "../../../src/types/request";
+import { getPaginatedFoundAnnounce } from "../../../../src/services/announceService";
+import { SearchAnnounceFilter } from "../../../../src/types/request";
+import { containerStyles } from "../../../../src/styles/containerStyles";
+import ViewTitle from "../../../../src/components/view-title";
+import NavigationButton from "../../../../src/components/buttons/navigation-button";
+import AnnounceFilterForm from "../../../../src/components/forms/announce-filter-form";
+import AnnounceGrid from "../../../../src/components/announces/announce-grid";
+import Paginator from "../../../../src/components/paginator";
+
 
 export default function foundIndex() {
     const [currentPage, setCurrentPage] = useState(0);
