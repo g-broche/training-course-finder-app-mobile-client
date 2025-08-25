@@ -1,33 +1,23 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
-import { useEffect, useState } from 'react';
 import { COLOR_STYLES } from '../../styles/constants/colors';
-import { getUserFromToken } from '../../services/authService';
 import { DIMENSIONS } from '../../styles/constants/dimensions';
 import { FONT_STYLES } from '../../styles/constants/fonts';
-import { buttonStyles } from '../../styles/buttonStyles';
 import DangerButton from '../buttons/danger-button';
-import { LoggedUser } from '../../types/dto';
 
-export default function UserDetailDropdown({ onLogout }: { onLogout: () => void }) {
-    const [user, setUser] = useState<LoggedUser | null>(null);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            const userData = await getUserFromToken();
-            setUser(userData);
-        };
-        fetchUser();
-    }, []);
-
-    if (!user) return null;
+export default function UserDetailDropdown() {
+    const { authState, onLogout } = useAuth();
 
     return (
-        <View style={styles.dropdown}>
-            <Text style={styles.text}>{user.displayName}</Text>
-            <Text style={styles.text}>{user.email}</Text>
-            <DangerButton title='Logout' callback={onLogout}></DangerButton>
-        </View>
+        authState.user
+            ? (
+                <View style={styles.dropdown}>
+                    <Text style={styles.text}>{authState.user.displayName}</Text>
+                    <Text style={styles.text}>{authState.user.email}</Text>
+                    <DangerButton title='Logout' callback={onLogout}></DangerButton>
+                </View>
+            )
+            : null
     );
 }
 

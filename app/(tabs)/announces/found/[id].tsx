@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAnnounceDetails } from "../../../../src/services/announceService";
 import AnnounceData from "../../../../src/components/announces/announce-data";
 import ErrorText from "../../../../src/components/error-text";
+import ChatMenu from "../../../../src/components/chat/chat-menu";
 
 export default function AnnounceDetails() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -23,7 +24,12 @@ export default function AnnounceDetails() {
                 <View style={containerStyles.main}>
                     {isLoading && <ActivityIndicator />}
                     {isError && <ErrorText error={error} />}
-                    {!isLoading && data && <AnnounceData announce={data} />}
+                    {!isLoading && data && (
+                        <>
+                            <AnnounceData announce={data} />
+                            <ChatMenu announce={data} />
+                        </>
+                    )}
                 </View>
             </ScrollView>
         </SafeAreaView>

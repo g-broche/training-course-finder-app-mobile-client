@@ -12,7 +12,6 @@ const ENDPOINTS = {
 }
 
 export const formatFilterFromForm = (filter: SearchAnnounceFilter = {}) => {
-    console.log("raw filter value", filter)
     const searchIsValid = typeof filter.search === "string" && filter.search.length > 0;
     const categoryIsValid = typeof filter.categoryId === "number"
         && Number.isInteger(filter.categoryId)

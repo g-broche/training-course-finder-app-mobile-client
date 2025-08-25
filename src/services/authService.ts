@@ -18,7 +18,6 @@ export const registerUser = async (payload: SignUpData) => {
         console.log(`Error : ${response.message || "an unexpected error occured during signup"}`);
     }
     return await response.data.jwt;
-
 }
 
 export const loginUser = async (credentials: Credentials) => {
@@ -32,13 +31,8 @@ export const loginUser = async (credentials: Credentials) => {
     return await response.data.jwt;
 }
 
-export const getToken = async (): Promise<string | null> => {
-    return await SecureStore.getItemAsync('jwt');
-};
-
-export const getUserFromToken = async (): Promise<LoggedUser | null> => {
-    const token = await getToken();
-    if (!token) return null;
+export const getUserFromToken = (token: string): LoggedUser | null => {
+    if (token === undefined || token === null || token.length === 0) return null;
 
     try {
         const decoded: any = jwtDecode(token);

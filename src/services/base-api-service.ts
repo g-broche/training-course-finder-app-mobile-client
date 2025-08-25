@@ -19,11 +19,12 @@ export const request = async <T>(
     params?: Record<string, string | number>
 ): Promise<ApiResponse> => {
     const builtApiRequest = buildUrl(url, params);
+    options.headers = {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+    };
     console.log("api call:", builtApiRequest);
-    const res = await fetch(builtApiRequest, {
-        headers: { 'Content-Type': 'application/json' },
-        ...options,
-    });
+    const res = await fetch(builtApiRequest, options);
 
     if (!res.ok) {
         throw new Error(`Request failed: ${res.status}`);

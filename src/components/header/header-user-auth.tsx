@@ -12,7 +12,7 @@ type HeaderUserAuthProps = {
 };
 
 export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
-    const { authState, onLogout } = useAuth();
+    const { authState } = useAuth();
     const [showDropdown, setShowDropdown] = useState(false);
 
     if (!authState.authenticated) {
@@ -35,8 +35,7 @@ export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
                 color={COLOR_STYLES.defaultTheme.colorInteractiveActive}
                 callback={toggleDropdown}
             />
-            {showDropdown && <UserDetailDropdown onLogout={onLogout!} />}
-
+            {showDropdown && <UserDetailDropdown />}
         </View>
     );
 }
