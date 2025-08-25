@@ -4,7 +4,7 @@
     "plugins": [
       "expo-router"
     ],
-    "name": "mobile-app",
-    "slug": "mobile-app"
+    "name": "finder-client",
+    "slug": "finder-client"
   }
 }

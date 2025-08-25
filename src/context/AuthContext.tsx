@@ -1,12 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { loginUser, registerUser } from '../services/authService';
+import { getUserFromToken, loginUser, registerUser } from '../services/authService';
 import axios from 'axios';
 import { Credentials, SignUpData } from '../types/request';
+import { LoggedUser } from '../types/dto';
+import { Alert } from 'react-native';
 
+interface AuthState {
+    token: string | null;
+    authenticated: boolean | null;
+    user: LoggedUser | null;
+}
 
 interface AuthProps {
-    authState?: { token: string | null; authenticated: boolean | null };
+    authState?: AuthState;
     onRegister?: (data: SignUpData) => Promise<void>;
     onLogin?: (credentials: Credentials) => Promise<void>;
     onLogout?: () => Promise<void>;
@@ -21,67 +28,83 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: any) => {
-    const [authState, setAuthState] = useState<{
-        token: string | null;
-        authenticated: boolean | null
-    }>({
+    const [authState, setAuthState] = useState<AuthState>({
         token: null,
-        authenticated: null
+        authenticated: null,
+        user: null
     });
 
     useEffect(() => {
         const loadToken = async () => {
             const token = await SecureStore.getItemAsync(TOKEN_KEY);
-            console.log('stored token:', token)
 
             if (token) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                const user = getUserFromToken(token);
                 setAuthState({
-                    token: token,
-                    authenticated: true
-                })
+                    token,
+                    authenticated: true,
+                    user,
+                });
+            } else {
+                setAuthState({
+                    token: null,
+                    authenticated: false,
+                    user: null,
+                });
             }
         }
 
         loadToken();
     }, []);
 
-    const register = async (data: SignUpData) => {
+    const register = async (data: SignUpData): Promise<void> => {
         try {
-            const receivedToken = await registerUser(data);
+            const response = await registerUser(data);
+            const isAuthResponseValid = response.success
+                && response.data.jwt
+                && typeof response.data.jwt === "string"
+                && response.data.jwt.length > 0
+            if (!isAuthResponseValid) {
+                Alert.alert('Sign up error', response.message || 'Unknown error occured during sign up');
+                return;
+            }
+            const token = response.data.jwt
+            await SecureStore.setItemAsync(TOKEN_KEY, token)
+            const loggedUser = getUserFromToken(token);
             setAuthState({
-                token: receivedToken,
-                authenticated: true
-            })
-            axios.defaults.headers.common['Authorization'] = `Bearer ${receivedToken}`;
-            await SecureStore.setItemAsync(TOKEN_KEY, receivedToken)
+                token: token,
+                authenticated: true,
+                user: loggedUser
+            });
         } catch (error) {
             console.log(error)
+            Alert.alert('Sign up error', 'Unknown error occured during sign up');
         }
     };
 
     const login = async (credentials: Credentials) => {
         try {
             const receivedToken = await loginUser(credentials);
+            if (!receivedToken) { return; }
+            await SecureStore.setItemAsync(TOKEN_KEY, receivedToken)
+            const loggedUser = getUserFromToken(receivedToken);
             setAuthState({
                 token: receivedToken,
-                authenticated: true
-            })
-            axios.defaults.headers.common['Authorization'] = `Bearer ${receivedToken}`;
-            await SecureStore.setItemAsync(TOKEN_KEY, receivedToken)
+                authenticated: true,
+                user: loggedUser
+            });
         } catch (error) {
             console.log(error)
         }
     };
 
     const logout = async () => {
-        await SecureStore.deleteItemAsync('jwt');
-
-        axios.defaults.headers.common['Authorization'] = ``;
-
+        await SecureStore.deleteItemAsync(TOKEN_KEY);
         setAuthState({
             token: null,
-            authenticated: false
+            authenticated: false,
+            user: null
         })
 
     };
