@@ -19,7 +19,7 @@ const renderHeader = (announce: Announce) => {
     return (
         <View style={{ alignItems: "flex-start", width: "100%" }}>
             <Text style={textStyles.metadata}>{dateContent}</Text>
-            <Text style={textStyles.metadata}>Found in : {announce.city} {announce.country}</Text>
+            <Text style={textStyles.metadata}>Found in : {announce.city} ({announce.country})</Text>
             <Text style={textStyles.metadata}>Posted by: {announce.author.displayName}</Text>
         </View>
     )

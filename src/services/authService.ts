@@ -3,32 +3,25 @@ import { request } from "./base-api-service";
 import * as SecureStore from 'expo-secure-store';
 import { Credentials, SignUpData } from "../types/request";
 import { LoggedUser } from "../types/dto";
+import { ApiResponse } from "../types/api-interface";
 
 const ENDPOINTS = {
     register: '/api/auth/signup',
     login: '/api/auth/signin'
 }
 
-export const registerUser = async (payload: SignUpData) => {
-    const response = await request(ENDPOINTS.register, {
+export const registerUser = async (payload: SignUpData): Promise<ApiResponse> => {
+    return await request(ENDPOINTS.register, {
         method: 'POST',
         body: JSON.stringify(payload),
     });
-    if (!response.success) {
-        console.log(`Error : ${response.message || "an unexpected error occured during signup"}`);
-    }
-    return await response.data.jwt;
 }
 
-export const loginUser = async (credentials: Credentials) => {
-    const response = await request(ENDPOINTS.login, {
+export const loginUser = async (credentials: Credentials): Promise<ApiResponse> => {
+    return await request(ENDPOINTS.login, {
         method: 'POST',
         body: JSON.stringify(credentials),
     });
-    if (!response.success) {
-        console.log(`Error : ${response.message || "an unexpected error occured during signin"}`);
-    }
-    return await response.data.jwt;
 }
 
 export const getUserFromToken = (token: string): LoggedUser | null => {

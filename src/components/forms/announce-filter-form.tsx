@@ -11,6 +11,7 @@ import { SearchAnnounceFilter } from '../../types/request';
 import { textStyles } from '../../styles/textStyles';
 import { formatFilterFromForm } from '../../services/announceService';
 import { containerStyles } from '../../styles/containerStyles';
+import ActionButton from '../buttons/action-button';
 
 interface AnnounceFilterFormProps {
     onFilterSubmit: (filter: SearchAnnounceFilter) => void;
@@ -84,7 +85,7 @@ export default function AnnounceFilterForm({ onFilterSubmit }: AnnounceFilterFor
                     }))}
                 />
 
-                <Button title="Filter" onPress={handleSubmit(onSubmit)} />
+                <ActionButton title="Filter" callback={handleSubmit(onSubmit)} />
             </View>
         </View>
     );

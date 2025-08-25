@@ -16,6 +16,7 @@ import { FoundItemRequest } from '../../types/request';
 import { createNewFoundAnnounce } from '../../services/announceService';
 import { useAuth } from '../../context/AuthContext';
 import { endOfToday } from 'date-fns';
+import ActionButton from '../buttons/action-button';
 
 
 const schema = yup.object().shape({
@@ -192,7 +193,7 @@ export default function FoundItemForm() {
                 lngField="longitude"
             />
 
-            <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+            <ActionButton title="Submit" callback={handleSubmit(onSubmit)} />
         </View>
     );
 }

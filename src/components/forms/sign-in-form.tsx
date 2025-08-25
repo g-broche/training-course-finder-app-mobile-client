@@ -14,6 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
 import { useAuth } from '../../context/AuthContext';
+import { FormGroupInput } from './form-group-input';
 
 type LoginFormData = {
     email: string;
@@ -21,18 +22,16 @@ type LoginFormData = {
 };
 
 const loginSchema = yup.object().shape({
-    email: yup.string().email('Invalid email').required('Email is required'),
+    email: yup
+        .string()
+        .email('Invalid email')
+        .matches(
+            /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+            'Email must have a valid format'
+        )
+        .required('Email is required'),
     password: yup.string().required('Password is required'),
 });
-
-type InputField = {
-    name: keyof LoginFormData;
-} & Partial<TextInputProps>;
-
-const inputs: InputField[] = [
-    { name: 'email', placeholder: 'Email', keyboardType: 'email-address', autoCapitalize: 'none' },
-    { name: 'password', placeholder: 'Password', secureTextEntry: true },
-];
 
 export default function SignInForm() {
     const { onLogin } = useAuth();
@@ -61,26 +60,28 @@ export default function SignInForm() {
     return (
         <View style={formStyles.container}>
             <Text style={formStyles.headingModal}>Sign in</Text>
-            {inputs.map(({ name, ...props }) => (
-                <Controller
-                    key={name}
-                    name={name}
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                        <View>
-                            <TextInput
-                                style={formStyles.input}
-                                onChangeText={onChange}
-                                value={value}
-                                {...props}
-                            />
-                            {errors[name] && (
-                                <Text style={formStyles.errorText}>{errors[name]?.message}</Text>
-                            )}
-                        </View>
-                    )}
-                />
-            ))}
+            <FormGroupInput
+                name="email"
+                label="Email"
+                placeholder='Enter your email'
+                control={control}
+                errors={errors}
+                inputProps={{
+                    autoCapitalize: "none",
+                    keyboardType: 'email-address'
+                }}
+            />
+            <FormGroupInput
+                name="password"
+                label="Password"
+                placeholder='Enter your password'
+                control={control}
+                errors={errors}
+                inputProps={{
+                    autoCapitalize: "none",
+                    secureTextEntry: true
+                }}
+            />
             <ActionButton title='Sign in' callback={handleSubmit(onSubmit)}></ActionButton>
         </View>
     );

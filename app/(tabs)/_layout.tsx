@@ -1,13 +1,13 @@
 import { Stack, Tabs } from 'expo-router';
+import * as NavigationBar from 'expo-navigation-bar';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, Text, ScrollView } from 'react-native';
+import { Pressable, Text, ScrollView, Platform } from 'react-native';
 import { COLOR_STYLES } from '../../src/styles/constants/colors';
 import AppHeader from '../../src/components/header/app-header';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import SignUpForm from '../../src/components/forms/sign-up-form';
 import SignInForm from '../../src/components/forms/sign-in-form';
-import { modalStyles } from '../../src/styles/modalStyles';
 import { useAuth } from '../../src/context/AuthContext';
 
 export default function TabsLayout() {
@@ -66,7 +66,7 @@ export default function TabsLayout() {
             </Tabs>
 
             <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
-                <ScrollView style={modalStyles.container}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20, backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary, borderRadius: 10 }}>
                     {isSignUp
                         ? <SignUpForm />
                         : <SignInForm />}

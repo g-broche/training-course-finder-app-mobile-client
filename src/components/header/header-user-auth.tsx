@@ -27,15 +27,19 @@ export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
         setShowDropdown(prev => !prev);
     };
 
+    const closeDropdown = () => {
+        setShowDropdown(false)
+    }
+
     return (
         <View>
             <IconActionButton
                 iconName="person-circle-outline"
                 size={DIMENSIONS.sizes.interactives.width}
                 color={COLOR_STYLES.defaultTheme.colorInteractiveActive}
-                callback={toggleDropdown}
+                callback={() => toggleDropdown()}
             />
-            {showDropdown && <UserDetailDropdown />}
+            {authState.user !== null && showDropdown && <UserDetailDropdown callback={() => closeDropdown()} />}
         </View>
     );
 }

@@ -17,9 +17,12 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
     useEffect(() => {
-        if (Platform.OS === 'android') {
-            NavigationBar.setButtonStyleAsync('light');
-            SystemUI.setBackgroundColorAsync(COLOR_STYLES.defaultTheme.colorPrimary);
+        if (Platform.OS === "android") {
+            (async () => {
+                await NavigationBar.setBackgroundColorAsync(COLOR_STYLES.defaultTheme.colorPrimary);
+                await NavigationBar.setButtonStyleAsync("light");
+                await NavigationBar.setBorderColorAsync("transparent");
+            })();
         }
     }, []);
 

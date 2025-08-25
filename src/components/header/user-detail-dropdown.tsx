@@ -5,16 +5,23 @@ import { DIMENSIONS } from '../../styles/constants/dimensions';
 import { FONT_STYLES } from '../../styles/constants/fonts';
 import DangerButton from '../buttons/danger-button';
 
-export default function UserDetailDropdown() {
-    const { authState, onLogout } = useAuth();
+interface UserDetailDropdownProps {
+    callback: () => void;
+}
 
+export default function UserDetailDropdown({ callback }: UserDetailDropdownProps) {
+    const { authState, onLogout } = useAuth();
+    const logoutAndClose = (): void => {
+        callback()
+        onLogout()
+    }
     return (
         authState.user
             ? (
                 <View style={styles.dropdown}>
                     <Text style={styles.text}>{authState.user.displayName}</Text>
                     <Text style={styles.text}>{authState.user.email}</Text>
-                    <DangerButton title='Logout' callback={onLogout}></DangerButton>
+                    <DangerButton title='Logout' callback={() => logoutAndClose()}></DangerButton>
                 </View>
             )
             : null

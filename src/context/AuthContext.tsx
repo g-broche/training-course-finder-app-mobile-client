@@ -4,6 +4,7 @@ import { getUserFromToken, loginUser, registerUser } from '../services/authServi
 import axios from 'axios';
 import { Credentials, SignUpData } from '../types/request';
 import { LoggedUser } from '../types/dto';
+import { Alert } from 'react-native';
 
 interface AuthState {
     token: string | null;
@@ -57,30 +58,51 @@ export const AuthProvider = ({ children }: any) => {
         loadToken();
     }, []);
 
-    const register = async (data: SignUpData) => {
+    const register = async (data: SignUpData): Promise<void> => {
         try {
-            const receivedToken = await registerUser(data);
-            if (!receivedToken) { return; }
-            await SecureStore.setItemAsync(TOKEN_KEY, receivedToken)
-            const loggedUser = getUserFromToken(receivedToken);
+            const response = await registerUser(data);
+            const isAuthResponseValid = response.success
+                && response.data.jwt
+                && typeof response.data.jwt === "string"
+                && response.data.jwt.length > 0
+            if (!isAuthResponseValid) {
+                Alert.alert('Sign up error', response.message || 'Unknown error occured during sign up');
+                return;
+            }
+            const token = response.data.jwt
+            await SecureStore.setItemAsync(TOKEN_KEY, token)
+            const loggedUser = getUserFromToken(token);
             setAuthState({
-                token: receivedToken,
+                token: token,
                 authenticated: true,
                 user: loggedUser
             });
         } catch (error) {
             console.log(error)
+            Alert.alert('Sign up error', 'Unknown error occured during sign up');
         }
     };
 
     const login = async (credentials: Credentials) => {
         try {
-            const receivedToken = await loginUser(credentials);
-            if (!receivedToken) { return; }
-            await SecureStore.setItemAsync(TOKEN_KEY, receivedToken)
-            const loggedUser = getUserFromToken(receivedToken);
+            console.log("start login check")
+            const response = await loginUser(credentials);
+            console.log("login response", response)
+            const isAuthResponseValid = response.success
+                && response.data.jwt
+                && typeof response.data.jwt === "string"
+                && response.data.jwt.length > 0
+            if (!isAuthResponseValid) {
+                const message = response.message || 'Unknown error occured during sign in'
+                console.log("should display error",)
+                Alert.alert('Sign in error', message);
+                return;
+            }
+            const token = response.data.jwt
+            await SecureStore.setItemAsync(TOKEN_KEY, token)
+            const loggedUser = getUserFromToken(token);
             setAuthState({
-                token: receivedToken,
+                token: token,
                 authenticated: true,
                 user: loggedUser
             });

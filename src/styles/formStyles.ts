@@ -8,7 +8,7 @@ export const formStyles = StyleSheet.create({
         padding: DIMENSIONS.spacings.modal.padding,
         width: '100%',
         flexGrow: 1,
-        gap: DIMENSIONS.spacings.gaps.xxl,
+        gap: DIMENSIONS.spacings.gaps.xl,
     },
     formGroup: {
         gap: DIMENSIONS.spacings.gaps.s,
