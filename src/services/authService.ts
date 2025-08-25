@@ -10,17 +10,6 @@ const ENDPOINTS = {
     login: '/api/auth/signin'
 }
 
-// export const registerUser = async (payload: SignUpData) :Promise<ApiResponse> => {
-//     const response = await request(ENDPOINTS.register, {
-//         method: 'POST',
-//         body: JSON.stringify(payload),
-//     });
-//     if (!response.success) {
-//         console.log(`Error : ${response.message || "an unexpected error occured during signup"}`);
-//     }
-//     return await response.data.jwt;
-// }
-
 export const registerUser = async (payload: SignUpData): Promise<ApiResponse> => {
     return await request(ENDPOINTS.register, {
         method: 'POST',
@@ -28,15 +17,11 @@ export const registerUser = async (payload: SignUpData): Promise<ApiResponse> =>
     });
 }
 
-export const loginUser = async (credentials: Credentials) => {
-    const response = await request(ENDPOINTS.login, {
+export const loginUser = async (credentials: Credentials): Promise<ApiResponse> => {
+    return await request(ENDPOINTS.login, {
         method: 'POST',
         body: JSON.stringify(credentials),
     });
-    if (!response.success) {
-        console.log(`Error : ${response.message || "an unexpected error occured during signin"}`);
-    }
-    return await response.data.jwt;
 }
 
 export const getUserFromToken = (token: string): LoggedUser | null => {

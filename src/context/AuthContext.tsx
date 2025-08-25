@@ -85,12 +85,24 @@ export const AuthProvider = ({ children }: any) => {
 
     const login = async (credentials: Credentials) => {
         try {
-            const receivedToken = await loginUser(credentials);
-            if (!receivedToken) { return; }
-            await SecureStore.setItemAsync(TOKEN_KEY, receivedToken)
-            const loggedUser = getUserFromToken(receivedToken);
+            console.log("start login check")
+            const response = await loginUser(credentials);
+            console.log("login response", response)
+            const isAuthResponseValid = response.success
+                && response.data.jwt
+                && typeof response.data.jwt === "string"
+                && response.data.jwt.length > 0
+            if (!isAuthResponseValid) {
+                const message = response.message || 'Unknown error occured during sign in'
+                console.log("should display error",)
+                Alert.alert('Sign in error', message);
+                return;
+            }
+            const token = response.data.jwt
+            await SecureStore.setItemAsync(TOKEN_KEY, token)
+            const loggedUser = getUserFromToken(token);
             setAuthState({
-                token: receivedToken,
+                token: token,
                 authenticated: true,
                 user: loggedUser
             });
