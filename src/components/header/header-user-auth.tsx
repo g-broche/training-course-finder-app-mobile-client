@@ -12,7 +12,7 @@ type HeaderUserAuthProps = {
 };
 
 export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
-    const { authState, onLogout } = useAuth();
+    const { authState } = useAuth();
     const [showDropdown, setShowDropdown] = useState(false);
 
     if (!authState.authenticated) {
@@ -27,16 +27,19 @@ export default function HeaderUserAuth({ onSignInPress }: HeaderUserAuthProps) {
         setShowDropdown(prev => !prev);
     };
 
+    const closeDropdown = () => {
+        setShowDropdown(false)
+    }
+
     return (
         <View>
             <IconActionButton
                 iconName="person-circle-outline"
                 size={DIMENSIONS.sizes.interactives.width}
                 color={COLOR_STYLES.defaultTheme.colorInteractiveActive}
-                callback={toggleDropdown}
+                callback={() => toggleDropdown()}
             />
-            {showDropdown && <UserDetailDropdown onLogout={onLogout!} />}
-
+            {authState.user !== null && showDropdown && <UserDetailDropdown callback={() => closeDropdown()} />}
         </View>
     );
 }

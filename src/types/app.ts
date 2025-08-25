@@ -17,3 +17,8 @@ export interface Image {
     name: string;
     type: string
 }
+
+export interface InstructionResult {
+    isSuccess: boolean;
+    message: string;
+}

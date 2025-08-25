@@ -13,6 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { formStyles } from '../../styles/formStyles';
 import ActionButton from '../buttons/action-button';
 import { useAuth } from '../../context/AuthContext';
+import { FormGroupInput } from './form-group-input';
 
 type FormData = {
     firstName: string;
@@ -40,7 +41,14 @@ const schema = yup.object().shape({
         .required('Display name is required')
         .min(1, 'Display name must be at least 1 characters')
         .max(30, 'Display name cannot exceed 30 characters'),
-    email: yup.string().email('Invalid email').required('Email is required'),
+    email: yup
+        .string()
+        .email('Email must have a valid format')
+        .matches(
+            /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+            'Email must have a valid format'
+        )
+        .required('Email is required'),
     password: yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
     passwordConfirm: yup
         .string()
@@ -50,19 +58,6 @@ const schema = yup.object().shape({
         .bool()
         .oneOf([true], 'You must accept GDPR terms'),
 });
-
-type InputField = {
-    name: keyof FormData;
-} & Partial<TextInputProps>;
-
-const inputs: InputField[] = [
-    { name: 'firstName', placeholder: 'First Name' },
-    { name: 'lastName', placeholder: 'Last Name' },
-    { name: 'displayName', placeholder: 'Display Name' },
-    { name: 'email', placeholder: 'Email', keyboardType: 'email-address', autoCapitalize: 'none' },
-    { name: 'password', placeholder: 'Password', secureTextEntry: true },
-    { name: 'passwordConfirm', placeholder: 'Confirm Password', secureTextEntry: true },
-];
 
 export default function SignUpForm() {
     const { onRegister } = useAuth();
@@ -96,28 +91,61 @@ export default function SignUpForm() {
     return (
         <View style={formStyles.container}>
             <Text style={formStyles.headingModal}>Create your account</Text>
-            {inputs.map(({ name, ...props }) => (
-                <Controller
-                    key={name}
-                    name={name}
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                        <View>
-                            <TextInput
-                                style={formStyles.input}
-                                onChangeText={onChange}
-                                value={value as string}
-                                {...props}
-                            />
-                            {errors[name] && (
-                                <Text style={formStyles.errorText}>{errors[name]?.message}</Text>
-                            )}
-                        </View>
-                    )}
-                />
-            ))}
+            <FormGroupInput
+                name="firstName"
+                label="First name"
+                placeholder='Enter your first name'
+                control={control}
+                errors={errors}
+            />
+            <FormGroupInput
+                name="lastName"
+                label="Last name"
+                placeholder='Enter your last name'
+                control={control}
+                errors={errors}
+            />
+            <FormGroupInput
+                name="displayName"
+                label="Name displayed publicly"
+                placeholder='Enter your display name'
+                control={control}
+                errors={errors}
+            />
+            <FormGroupInput
+                name="email"
+                label="Email"
+                placeholder='Enter your email'
+                control={control}
+                errors={errors}
+                inputProps={{
+                    autoCapitalize: "none",
+                    keyboardType: 'email-address'
+                }}
+            />
+            <FormGroupInput
+                name="password"
+                label="Password"
+                placeholder='Enter your password'
+                control={control}
+                errors={errors}
+                inputProps={{
+                    autoCapitalize: "none",
+                    secureTextEntry: true
+                }}
+            />
+            <FormGroupInput
+                name="passwordConfirm"
+                label="Password confirmation"
+                placeholder='Enter your password again'
+                control={control}
+                errors={errors}
+                inputProps={{
+                    autoCapitalize: "none",
+                    secureTextEntry: true
+                }}
+            />
 
-            {/* GDPR Checkbox */}
             <Controller
                 name="hasAcceptedGdpr"
                 control={control}
