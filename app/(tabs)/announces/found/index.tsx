@@ -30,7 +30,7 @@ export default function foundIndex() {
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={containerStyles.main}>
                     <ViewTitle title="Found items" />
-                    <NavigationButton title="Report found item" pathname="/found/submit"></NavigationButton>
+                    <NavigationButton title="Report found item" pathname="announces/found/submit"></NavigationButton>
                     <AnnounceFilterForm onFilterSubmit={(filter) => updateSearch(filter)} />
                     {isLoading && <ActivityIndicator />}
                     {isError && <Text>Error: {String(error)}</Text>}
