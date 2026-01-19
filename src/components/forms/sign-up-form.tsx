@@ -62,11 +62,7 @@ const schema = yup.object().shape({
 export default function SignUpForm() {
     const { onRegister } = useAuth();
 
-    const {
-        control,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<FormData>({
+    const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema),
         defaultValues: {
             firstName: '',

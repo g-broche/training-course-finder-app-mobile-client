@@ -60,4 +60,10 @@ export const containerStyles = StyleSheet.create({
         padding: DIMENSIONS.spacings.gaps.l,
         gap: DIMENSIONS.spacings.gaps.s
     },
+    modalScrollview: {
+        flexGrow: 1,
+        padding: 20,
+        backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
+        borderRadius: 10
+    },
 });

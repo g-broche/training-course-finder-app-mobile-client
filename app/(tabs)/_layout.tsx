@@ -9,6 +9,7 @@ import Modal from 'react-native-modal';
 import SignUpForm from '../../src/components/forms/sign-up-form';
 import SignInForm from '../../src/components/forms/sign-in-form';
 import { useAuth } from '../../src/context/AuthContext';
+import { containerStyles } from '../../src/styles/containerStyles';
 
 export default function TabsLayout() {
     const { authState } = useAuth();
@@ -66,7 +67,8 @@ export default function TabsLayout() {
             </Tabs>
 
             <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
-                <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20, backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary, borderRadius: 10 }}>
+                <ScrollView
+                    contentContainerStyle={containerStyles.modalScrollview}>
                     {isSignUp
                         ? <SignUpForm />
                         : <SignInForm />}
@@ -80,7 +82,10 @@ export default function TabsLayout() {
                     </Pressable>
 
                     <Pressable onPress={closeModal} style={{ marginTop: 20 }}>
-                        <Text style={{ color: COLOR_STYLES.defaultTheme.colorTertiary, textAlign: 'center' }}>Close</Text>
+                        <Text
+                            style={{ color: COLOR_STYLES.defaultTheme.colorTertiary, textAlign: 'center' }}>
+                            Close
+                        </Text>
                     </Pressable>
                 </ScrollView>
             </Modal>

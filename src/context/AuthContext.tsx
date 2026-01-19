@@ -85,7 +85,6 @@ export const AuthProvider = ({ children }: any) => {
 
     const login = async (credentials: Credentials) => {
         try {
-            console.log("start login check")
             const response = await loginUser(credentials);
             console.log("login response", response)
             const isAuthResponseValid = response.success

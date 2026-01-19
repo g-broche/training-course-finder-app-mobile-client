@@ -27,9 +27,9 @@ const schema = yup.object().shape({
         .max(50, 'Title cannot exceed 50 characters'),
     description: yup
         .string()
-        .required('Title is required')
-        .min(30, 'Description must be at least 5 characters')
-        .max(1000, 'Description cannot exceed 50 characters'),
+        .required('Description is required')
+        .min(30, 'Description must be at least 30 characters')
+        .max(1000, 'Description cannot exceed 1000 characters'),
     image: yup
         .mixed<File>()
         .required('Photo is required')
@@ -38,7 +38,6 @@ const schema = yup.object().shape({
 
             // Normalize common Android issue where type is just 'image' or missing
             const type = value.type;
-
             return (
                 type === 'image' ||
                 type?.startsWith('image/')
@@ -89,7 +88,6 @@ export default function FoundItemForm() {
     const reverseGeocode = async (lat: number, lng: number) => {
         try {
             const { status } = await Location.requestForegroundPermissionsAsync();
-
             if (status !== 'granted') {
                 Alert.alert(
                     'Permission Required',
@@ -97,13 +95,11 @@ export default function FoundItemForm() {
                 );
                 return;
             }
-
             const [place] = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lng });
             if (place) {
                 setValue('city', place.city || '');
                 setValue('country', place.country || '');
             }
-
         } catch (err) {
             console.log('Reverse geocode error:', err);
         }
