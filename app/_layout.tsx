@@ -3,6 +3,7 @@ import * as NavigationBar from "expo-navigation-bar";
 import { Slot } from "expo-router";
 import { useEffect } from "react";
 import { Platform, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "../src/context/AuthContext";
 import { COLOR_STYLES } from "../src/styles/constants/colors";
@@ -24,16 +25,18 @@ export default function RootLayout() {
 
   const Content = () => {
     return (
-      <SafeAreaProvider>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
-          }}
-        >
-          <Slot />
-        </View>
-      </SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
+            }}
+          >
+            <Slot />
+          </View>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
       // <SafeAreaProvider>
       //     <View style={{ flex: 1, backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary }}>
       //         <StatusBar style="light" />
