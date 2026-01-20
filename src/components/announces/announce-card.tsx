@@ -27,10 +27,13 @@ const isAnnounceForFoundObject = (announce: Announce) => {
 };
 
 const getRedirectionLinkPathForAnnounce = (announce: Announce) => {
-  const path = isAnnounceForFoundObject(announce)
-    ? `/announces/found/${announce.id}`
-    : `/announces/lost/${announce.id}`;
-  return path;
+  const basePath = isAnnounceForFoundObject(announce)
+    ? "/announces/found/[id]"
+    : "/announces/lost/[id]";
+  return {
+    pathname: basePath as any,
+    params: { id: announce.id },
+  };
 };
 
 const renderPhotoOrDescription = (announce: Announce) => {

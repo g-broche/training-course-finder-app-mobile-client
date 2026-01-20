@@ -20,7 +20,7 @@ export default function AnnounceDetails() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={containerStyles.main}>
           {isLoading && <ActivityIndicator />}

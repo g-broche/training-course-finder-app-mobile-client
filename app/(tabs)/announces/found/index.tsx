@@ -29,7 +29,7 @@ export default function FoundIndex() {
     setFilter(filter);
   };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={containerStyles.main}>
           <ViewTitle title="Found items" />
