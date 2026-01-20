@@ -1,12 +1,13 @@
+import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { Image, Pressable, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import { containerStyles } from "../../styles/containerStyles";
 import { mediaStyles } from "../../styles/mediaStyles";
 import { textStyles } from "../../styles/textStyles";
 import { Announce } from "../../types/dto";
 import {
-    isAnnounceTypeFound,
-    isImageIncludedInAnnounce,
+  isAnnounceTypeFound,
+  isImageIncludedInAnnounce,
 } from "../../utils/dtoUtil";
 import { formatDate } from "../../utils/pipe";
 
@@ -37,7 +38,9 @@ const renderPhotoOrDescription = (announce: Announce) => {
     <Image
       source={{ uri: announce.photo }}
       style={mediaStyles.thumbnail}
-      resizeMode="contain"
+      contentFit="contain"
+      cachePolicy="memory-disk"
+      transition={200}
     />
   ) : (
     <Text style={textStyles.default}>{announce.description}</Text>

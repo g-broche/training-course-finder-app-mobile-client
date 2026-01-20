@@ -4,7 +4,7 @@ import { Announce } from "../types/dto";
 import { FoundItemRequest, SearchAnnounceFilter } from "../types/request";
 import { buildUrl, request, uploadMultipart } from "./base-api-service";
 
-const AMOUNT_PER_PAGE = Constants.expoConfig?.extra?.AMOUNT_PER_PAGE || "10";
+const AMOUNT_PER_PAGE = Constants.expoConfig?.extra?.AMOUNT_PER_PAGE || 10;
 
 const ENDPOINTS = {
   announceDetails: "/api/announces/",

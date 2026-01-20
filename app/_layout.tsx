@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import * as NavigationBar from "expo-navigation-bar";
 import { Slot } from "expo-router";
 import { useEffect } from "react";
@@ -6,9 +6,8 @@ import { Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "../src/context/AuthContext";
+import { queryClient } from "../src/core/queryClient";
 import { COLOR_STYLES } from "../src/styles/constants/colors";
-
-const queryClient = new QueryClient();
 
 export default function RootLayout() {
   useEffect(() => {
