@@ -6,17 +6,20 @@ export const textStyles = StyleSheet.create({
     heading1: {
         color: COLOR_STYLES.defaultTheme.colorTertiary,
         fontWeight: FONT_STYLES.weight.boldest,
-        fontSize: FONT_STYLES.sizes.xxl
+        fontSize: FONT_STYLES.sizes.xxl,
+        textAlign: "center"
     },
     heading2: {
         color: COLOR_STYLES.defaultTheme.colorTertiary,
         fontWeight: FONT_STYLES.weight.boldest,
-        fontSize: FONT_STYLES.sizes.xl
+        fontSize: FONT_STYLES.sizes.xl,
+        textAlign: "center"
     },
     heading3: {
         color: COLOR_STYLES.defaultTheme.colorTertiary,
         fontWeight: FONT_STYLES.weight.bolder,
-        fontSize: FONT_STYLES.sizes.l
+        fontSize: FONT_STYLES.sizes.l,
+        textAlign: "center"
     },
     interactiveActive: {
         color: COLOR_STYLES.defaultTheme.colorInteractiveActive,

@@ -29,3 +29,7 @@ export interface SearchAnnounceFilter {
     search?: string;
     categoryId?: number | undefined;
 };
+
+export interface NewMessageRequest {
+    message: string;
+};

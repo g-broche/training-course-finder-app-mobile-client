@@ -35,8 +35,6 @@ export function FormGroupImageSelector<T, K extends Path<T> = Path<T>>({
         if (!result.canceled && result.assets.length > 0) {
             const asset = result.assets[0];
 
-            console.log("image when selected: ", asset)
-
             const file: File = {
                 uri: asset.uri,
                 name: asset.fileName ?? 'photo.jpg',
