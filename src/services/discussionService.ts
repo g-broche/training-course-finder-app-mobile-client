@@ -1,18 +1,15 @@
-import Constants from "expo-constants";
-import {
-    NewMessageRequest
-} from "../types/request";
-import { formatStringTemplate } from "../utils/stringUtil";
+import { DetailedDiscussion, Discussion } from "../types/dto";
+import { NewMessageRequest } from "../types/request";
 import { request } from "./base-api-service";
 
-const AMOUNT_PER_PAGE = Constants.expoConfig?.extra?.AMOUNT_PER_PAGE || "10";
-
 const ENDPOINTS = {
-  newDiscussion: "/api/announces/:id/discussions/new",
-  listAnnounceDiscussions: "/api/announces/:id/discussions",
-  getExistingAnnounceDiscussionForResponder:
-    "/api/announces/:id/discussions/private",
-  getDiscussion: "/api/discussions/:id",
+  newDiscussion: (idAnnounce: string) =>
+    `/api/announces/${idAnnounce}/discussions/new`,
+  addMessage: (idDiscussion: string) =>
+    `/api/discussions/${idDiscussion}/messages/new`,
+  listAnnounceDiscussions: (idAnnounce: string) =>
+    `/api/announces/${idAnnounce}/discussions`,
+  getDiscussion: (idDiscussion: string) => `/api/discussions/${idDiscussion}`,
 };
 
 export const createNewDiscussion = async (
@@ -20,9 +17,8 @@ export const createNewDiscussion = async (
   payload: NewMessageRequest,
   userToken: string,
 ): Promise<any> => {
-  const requestUrl = formatStringTemplate(ENDPOINTS.newDiscussion, {
-    id: announceId,
-  });
+  const requestUrl = ENDPOINTS.newDiscussion(announceId);
+
   const response = await request(requestUrl, {
     method: "POST",
     headers: { Authorization: `Bearer ${userToken}` },
@@ -39,10 +35,9 @@ export const createNewDiscussion = async (
 export const getAllAnnounceDiscussions = async (
   announceId: string,
   userToken: string,
-): Promise<any> => {
-  const requestUrl = formatStringTemplate(ENDPOINTS.listAnnounceDiscussions, {
-    id: announceId,
-  });
+): Promise<Discussion[]> => {
+  const requestUrl = ENDPOINTS.listAnnounceDiscussions(announceId);
+
   const response = await request(requestUrl, {
     method: "GET",
     headers: { Authorization: `Bearer ${userToken}` },
@@ -55,14 +50,12 @@ export const getAllAnnounceDiscussions = async (
   return await response.data;
 };
 
-export const getExistingResponderDiscussionForAnnounce = async (
-  announceId: string,
+export const getDiscussion = async (
+  discussionId: string,
   userToken: string,
-): Promise<any> => {
-  const requestUrl = formatStringTemplate(
-    ENDPOINTS.getExistingAnnounceDiscussionForResponder,
-    { id: announceId },
-  );
+): Promise<DetailedDiscussion> => {
+  const requestUrl = ENDPOINTS.getDiscussion(discussionId);
+
   const response = await request(requestUrl, {
     method: "GET",
     headers: { Authorization: `Bearer ${userToken}` },
@@ -75,20 +68,22 @@ export const getExistingResponderDiscussionForAnnounce = async (
   return await response.data;
 };
 
-export const getDiscussion = async (
+export const addMessage = async (
   discussionId: string,
+  message: NewMessageRequest,
   userToken: string,
-): Promise<any> => {
-  const requestUrl = formatStringTemplate(ENDPOINTS.listAnnounceDiscussions, {
-    id: discussionId,
-  });
+): Promise<DetailedDiscussion> => {
+  const requestUrl = ENDPOINTS.addMessage(discussionId);
+  console.log("endpoint", requestUrl);
+
   const response = await request(requestUrl, {
-    method: "GET",
+    method: "POST",
     headers: { Authorization: `Bearer ${userToken}` },
+    body: JSON.stringify(message),
   });
   if (!response.success) {
     console.log(
-      `Error : ${response.message || "an unexpected error occured while getting existing discussion for current user"}`,
+      `Error : ${response.message || "an unexpected error occured while adding message to discussion"}`,
     );
   }
   return await response.data;

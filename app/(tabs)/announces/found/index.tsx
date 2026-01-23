@@ -42,7 +42,7 @@ export default function FoundIndex() {
           />
           {isLoading && <ActivityIndicator />}
           {isError && <Text>Error: {String(error)}</Text>}
-          {!isLoading && data?.content && (
+          {!isLoading && !!data && !!data.content && (
             <>
               <AnnounceGrid announces={data.content} />
               {data.totalPages && data.totalPages > 1 && (
