@@ -48,8 +48,8 @@
       "reactCompiler": true
     },
     "extra": {
-      // "API_BASE_URL": "http://10.51.163.145:8080/api",
-      "API_BASE_URL": "http://192.168.1.173:8080/api",
+      "API_BASE_URL": "http://10.51.163.145:8080/api",
+      // "API_BASE_URL": "http://192.168.1.173:8080/api",
       "AMOUNT_PER_PAGE": 10,
       "SCROLL_EVENT_DELAY": 25
     }

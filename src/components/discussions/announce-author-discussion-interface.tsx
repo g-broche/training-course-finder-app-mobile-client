@@ -1,13 +1,15 @@
 import { useState } from "react";
 import {
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Modal,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
 } from "react-native";
+import queryClient from "../../core/queryClient";
+import { containerStyles } from "../../styles/containerStyles";
 import { Discussion } from "../../types/dto";
+import ActionButton from "../buttons/action-button";
 import { DiscussionCard } from "./discussion-card";
 import { DiscussionView } from "./discussion-view";
 
@@ -18,48 +20,61 @@ interface AnnounceAuthorDiscussionInterfaceProps {
 export default function AnnounceAuthorDiscussionInterface({
   discussions,
 }: AnnounceAuthorDiscussionInterfaceProps) {
-  const [selectedDiscussionId, setSelectedDiscussionId] = useState<
-    string | null
-  >(null);
+  const [selectedDiscussion, setSelectedDiscussion] =
+    useState<Discussion | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleOpenDiscussion = (discussionId: string) => {
-    setSelectedDiscussionId(discussionId);
+  const handleOpenDiscussion = (discussion: Discussion) => {
+    setSelectedDiscussion(discussion);
   };
 
   const handleCloseModal = () => {
-    setSelectedDiscussionId(null);
+    setSelectedDiscussion(null);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.invalidateQueries({ queryKey: ["discussion"] });
+    setRefreshing(false);
   };
 
   return (
     <>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={containerStyles.sectionCentered}
       >
         {discussions.map((discussion) => (
           <DiscussionCard
             key={discussion.discussionId}
             discussion={discussion}
-            onPress={() => handleOpenDiscussion(discussion.discussionId)}
+            onPress={() => handleOpenDiscussion(discussion)}
           />
         ))}
       </ScrollView>
 
       <Modal
-        visible={selectedDiscussionId !== null}
+        visible={selectedDiscussion !== null}
         animationType="slide"
         onRequestClose={handleCloseModal}
       >
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity
-            onPress={handleCloseModal}
-            style={{ padding: 16, backgroundColor: "#f0f0f0" }}
+        <View style={containerStyles.BackgroundContainer}>
+          <ActionButton title="Close" callback={handleCloseModal} size="full" />
+          <ScrollView
+            style={containerStyles.modalScrollview}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           >
-            <Text>Close</Text>
-          </TouchableOpacity>
-          {selectedDiscussionId && (
-            <DiscussionView discussionId={selectedDiscussionId} />
-          )}
+            {selectedDiscussion && (
+              <DiscussionView
+                discussionId={selectedDiscussion.discussionId}
+                announceAuthorDisplayName={
+                  selectedDiscussion.announceAuthor.displayName
+                }
+              />
+            )}
+          </ScrollView>
         </View>
       </Modal>
     </>
@@ -73,5 +88,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     width: "100%",
+    gap: 20,
   },
 });

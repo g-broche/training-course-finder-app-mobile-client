@@ -130,7 +130,7 @@ export default function MessageForm({
         >
           <FormGroupArea
             name="message"
-            label="Message"
+            label="Reply"
             placeholder="Enter your message..."
             control={control}
             errors={errors}

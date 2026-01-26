@@ -89,7 +89,8 @@ export function DiscussionView({
 
 const styles = {
   container: {
-    padding: DIMENSIONS.spacings.gaps.l,
+    padding: DIMENSIONS.spacings.gaps.s,
+    gap: DIMENSIONS.spacings.gaps.l,
   },
   header: {
     gap: DIMENSIONS.spacings.gaps.m,

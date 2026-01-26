@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { useAnnounceDiscussions } from "../../hooks/discussion/useAnnounceDiscussions";
+import { DIMENSIONS } from "../../styles/constants/dimensions";
+import { textStyles } from "../../styles/textStyles";
 import { Announce } from "../../types/dto";
 import MessageForm from "../forms/message-form";
 import { EmptyState } from "../shared/empty-state copy";
@@ -53,7 +55,14 @@ export default function DiscussionMenu({ announce }: Props) {
         )}
         {discussions?.length > 0 && (
           <>
-            <Text>Is from author and has discussions</Text>
+            <Text
+              style={[
+                textStyles.heading3,
+                { marginBottom: DIMENSIONS.spacings.gaps.l },
+              ]}
+            >
+              Open discussions
+            </Text>
             <AnnounceAuthorChatInterface discussions={discussions} />
           </>
         )}
