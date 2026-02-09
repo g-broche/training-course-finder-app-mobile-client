@@ -1,4 +1,9 @@
-import { AnnounceStatus, AnnounceType, InteractivityState } from "./type";
+import {
+  AnnounceStatus,
+  AnnounceType,
+  InteractivityState,
+  RecordStatus,
+} from "./type";
 
 export interface LoggedUser {
   uuid: string;
@@ -34,6 +39,7 @@ export interface Announce {
   type: AnnounceType;
   author: OtherUser;
   interactivityState: InteractivityState;
+  recordStatus: RecordStatus;
   status: AnnounceStatus;
   category: string;
   createdAt: string; // ISO timestamp (e.g., '2025-07-23T14:35:00Z')
@@ -41,6 +47,7 @@ export interface Announce {
 }
 
 export interface Message {
+  messageId: string;
   discussionId: string;
   announceId: string;
   index: number;
@@ -48,6 +55,7 @@ export interface Message {
   content: string;
   createdAt: string; // ISO timestamp
   editedAt: string;
+  isReported: boolean;
 }
 
 export interface Discussion {
@@ -55,6 +63,7 @@ export interface Discussion {
   announceId: string;
   announceAuthor: OtherUser;
   announceResponder: OtherUser;
+  announceTitle: string;
   interactivityStateName: string;
   messageCount: number;
   excerpt: string;

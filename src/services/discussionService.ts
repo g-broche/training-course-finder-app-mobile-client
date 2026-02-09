@@ -10,6 +10,8 @@ const ENDPOINTS = {
   listAnnounceDiscussions: (idAnnounce: string) =>
     `/api/announces/${idAnnounce}/discussions`,
   getDiscussion: (idDiscussion: string) => `/api/discussions/${idDiscussion}`,
+  reportMessage: (idDiscussion: string, idMessage: string) =>
+    `/api/discussions/${idDiscussion}/messages/${idMessage}/report`,
 };
 
 export const createNewDiscussion = async (
@@ -87,4 +89,23 @@ export const addMessage = async (
     );
   }
   return await response.data;
+};
+
+export const reportMessage = async (
+  discussionId: string,
+  messageId: string,
+  userToken: string,
+): Promise<string> => {
+  const requestUrl = ENDPOINTS.reportMessage(discussionId, messageId);
+
+  const response = await request(requestUrl, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${userToken}` },
+  });
+  if (!response.success) {
+    console.log(
+      `Error : ${response.message || "an unexpected error occured while getting discussion list"}`,
+    );
+  }
+  return response.message;
 };

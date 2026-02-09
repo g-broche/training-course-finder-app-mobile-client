@@ -8,7 +8,7 @@ const AMOUNT_PER_PAGE = Constants.expoConfig?.extra?.AMOUNT_PER_PAGE || 10;
 
 const ENDPOINTS = {
   announceDetails: "/api/announces/",
-  listFoundAnnounce: "/api/announces/found/paginated",
+  listFoundAnnounce: "/api/announces/paginated?type=found",
   newFoundAnnounce: "/api/announces/found/new",
 };
 
