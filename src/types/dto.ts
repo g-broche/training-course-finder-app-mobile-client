@@ -1,41 +1,83 @@
-import { AnnounceStatus, AnnounceType, InteractivityState } from "./type";
+import {
+  AnnounceStatus,
+  AnnounceType,
+  InteractivityState,
+  RecordStatus,
+} from "./type";
 
 export interface LoggedUser {
-    uuid: string,
-    email: string,
-    roles: string[],
-    firstName: string,
-    lastName: string,
-    displayName: string,
-    isVerified: boolean,
-    hasAcceptedGdpr: boolean,
-    userCreatedAt: Date,
-};
+  uuid: string;
+  email: string;
+  roles: string[];
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  isVerified: boolean;
+  hasAcceptedGdpr: boolean;
+  userCreatedAt: Date;
+}
 
 export interface OtherUser {
-    displayName: string,
-};
+  displayName: string;
+}
 
 export interface Category {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
 export interface Announce {
-    id: string;
-    title: string;
-    description: string;
-    photo: string | null;
-    city: string;
-    country: string;
-    latitude: string;
-    longitude: string;
-    relevantDate: string; // ISO format (e.g., '2025-07-23')
-    type: AnnounceType;
-    author: OtherUser;
-    interactivityState: InteractivityState;
-    status: AnnounceStatus;
-    category: string;
-    createdAt: string; // ISO timestamp (e.g., '2025-07-23T14:35:00Z')
-    editedAt: string;
+  id: string;
+  title: string;
+  description: string;
+  photo: string | null;
+  city: string;
+  country: string;
+  latitude: string;
+  longitude: string;
+  relevantDate: string; // ISO format (e.g., '2025-07-23')
+  type: AnnounceType;
+  author: OtherUser;
+  interactivityState: InteractivityState;
+  recordStatus: RecordStatus;
+  status: AnnounceStatus;
+  category: string;
+  createdAt: string; // ISO timestamp (e.g., '2025-07-23T14:35:00Z')
+  editedAt: string;
+}
+
+export interface Message {
+  messageId: string;
+  discussionId: string;
+  announceId: string;
+  index: number;
+  author: OtherUser;
+  content: string;
+  createdAt: string; // ISO timestamp
+  editedAt: string;
+  isReported: boolean;
+}
+
+export interface Discussion {
+  discussionId: string;
+  announceId: string;
+  announceAuthor: OtherUser;
+  announceResponder: OtherUser;
+  announceTitle: string;
+  interactivityStateName: string;
+  messageCount: number;
+  excerpt: string;
+  createdAt: string; // ISO timestamp
+  editedAt: string;
+}
+
+export interface DetailedDiscussion {
+  discussionId: string;
+  announceId: string;
+  announceAuthor: OtherUser;
+  announceResponder: OtherUser;
+  interactivityStateName: string;
+  messages: Message[];
+  createdAt: string; // ISO timestamp
+  editedAt: string;
 }

@@ -1,20 +1,33 @@
-import { Text, TouchableOpacity } from 'react-native';
-import { buttonStyles } from '../../styles/buttonStyles';
-import { textStyles } from '../../styles/textStyles';
+import { Text, TouchableOpacity } from "react-native";
+import { buttonStyles } from "../../styles/buttonStyles";
 
-type ButtonSizes = "default" | 'wide';
+type ButtonSizes = "default" | "wide" | "full";
 
 interface ActionButtonProps {
   title: string;
-  size?: ButtonSizes
+  size?: ButtonSizes;
   callback: (...args: any[]) => any;
 }
 
-export default function ActionButton({ title, size = "default", callback }: ActionButtonProps) {
-  const style = size === "default" ? buttonStyles.default : buttonStyles.wide;
+export default function ActionButton({
+  title,
+  size = "default",
+  callback,
+}: ActionButtonProps) {
+  const style = () => {
+    switch (size) {
+      case "wide":
+        return buttonStyles.wide;
+      case "full":
+        return buttonStyles.full;
+      case "default":
+        return buttonStyles.default;
+      default:
+        return buttonStyles.default;
+    }
+  };
   return (
-    <TouchableOpacity
-      style={style} onPress={() => callback()}>
+    <TouchableOpacity style={style()} onPress={() => callback()}>
       <Text style={buttonStyles.label}>{title}</Text>
     </TouchableOpacity>
   );

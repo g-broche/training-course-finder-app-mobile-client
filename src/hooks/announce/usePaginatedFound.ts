@@ -18,8 +18,5 @@ export const usePaginatedFound = (
   return useQuery({
     queryKey: ["found-announces", currentPage, filter],
     queryFn: () => getPaginatedFoundAnnounce(currentPage, filter),
-    staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: "always",
   });
 };

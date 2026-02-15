@@ -42,18 +42,21 @@ export default function FoundIndex() {
           />
           {isLoading && <ActivityIndicator />}
           {isError && <Text>Error: {String(error)}</Text>}
-          {!isLoading && data?.content && (
-            <>
-              <AnnounceGrid announces={data.content} />
-              {data.totalPages && data.totalPages > 1 && (
-                <Paginator
-                  currentPage={currentPage}
-                  totalPages={data.totalPages}
-                  onPageChange={(pageIndex) => setCurrentPage(pageIndex)}
-                />
-              )}
-            </>
-          )}
+          {!isLoading &&
+            !isError &&
+            data?.content &&
+            data.content.length > 0 && (
+              <>
+                <AnnounceGrid announces={data.content} />
+                {data.totalPages && data.totalPages > 1 && (
+                  <Paginator
+                    currentPage={currentPage}
+                    totalPages={data.totalPages}
+                    onPageChange={(pageIndex) => setCurrentPage(pageIndex)}
+                  />
+                )}
+              </>
+            )}
         </View>
       </ScrollView>
     </SafeAreaView>
