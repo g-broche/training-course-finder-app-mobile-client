@@ -65,13 +65,15 @@ export async function uploadMultipart({
   try {
     const formData = new FormData();
 
-    // Add the image file
-    const imageFile: any = {
-      uri: image.uri,
-      type: image.type || "image/jpeg",
-      name: "image.jpg",
-    };
-    formData.append(fieldName, imageFile);
+    // Add the image file if present
+    if (image) {
+      const imageFile: any = {
+        uri: image.uri,
+        type: image.type || "image/jpeg",
+        name: "image.jpg",
+      };
+      formData.append(fieldName, imageFile);
+    }
 
     // Add all other fields
     Object.entries(fields).forEach(([key, value]) => {

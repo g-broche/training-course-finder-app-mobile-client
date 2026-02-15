@@ -1,7 +1,11 @@
 import Constants from "expo-constants";
 import { Image } from "../types/app";
 import { Announce } from "../types/dto";
-import { FoundItemRequest, SearchAnnounceFilter } from "../types/request";
+import {
+  FoundItemRequest,
+  LostItemRequest,
+  SearchAnnounceFilter,
+} from "../types/request";
 import { buildUrl, request, uploadMultipart } from "./base-api-service";
 
 const AMOUNT_PER_PAGE = Constants.expoConfig?.extra?.AMOUNT_PER_PAGE || 10;
@@ -10,6 +14,8 @@ const ENDPOINTS = {
   announceDetails: "/api/announces/",
   listFoundAnnounce: "/api/announces/paginated?type=found",
   newFoundAnnounce: "/api/announces/found/new",
+  listLostAnnounce: "/api/announces/paginated?type=lost",
+  newLostAnnounce: "/api/announces/lost/new",
 };
 
 /**
@@ -114,6 +120,72 @@ export const getAnnounceDetails = async (id: string) => {
   const response = await request(requestUri, { method: "GET" });
   if (!response.success) {
     throw new Error(response.message || "Failed to retrieve announce data");
+  }
+  return await response.data;
+};
+
+/**
+ * sends request to the API to create a new announce for lost item based on data submitted
+ * @param data form data
+ * @param image Image associated with the lost item (optional)
+ * @param userToken token of active user
+ * @returns Created Announce
+ */
+export const createNewLostAnnounce = async (
+  data: LostItemRequest,
+  image: Image | null,
+  userToken: string,
+): Promise<Announce> => {
+  const fields: Record<string, string> = {
+    title: data.title,
+    description: data.description,
+    latitude: String(data.latitude),
+    longitude: String(data.longitude),
+    city: data.city,
+    country: data.country,
+    relevantDate: data.relevantDate.toISOString().split("T")[0],
+    categoryId: String(data.categoryId),
+  };
+
+  const response = await uploadMultipart({
+    url: buildUrl(ENDPOINTS.newLostAnnounce),
+    image: image,
+    fields: fields,
+    token: userToken,
+    fieldName: "image",
+  });
+
+  if (!response.success) {
+    throw new Error(response.message || "Failed to create lost announce");
+  }
+
+  return await response.data;
+};
+
+/**
+ * get page of lost announces
+ * @param page page requested
+ * @param filter title query and category filter
+ * @returns Api response containing the results
+ */
+export const getPaginatedLostAnnounce = async (
+  page: number,
+  filter: SearchAnnounceFilter = {},
+) => {
+  page = Number.isInteger(page) && page >= 0 ? page : 0;
+  const size = AMOUNT_PER_PAGE;
+  const params: Record<string, string | number> = {
+    page,
+    size,
+    ...filter,
+  };
+  const response = await request(
+    ENDPOINTS.listLostAnnounce,
+    { method: "GET" },
+    params,
+  );
+  if (!response.success) {
+    throw new Error(response.message || "Failed to retrieve lost announces");
   }
   return await response.data;
 };

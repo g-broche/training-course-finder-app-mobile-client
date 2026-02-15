@@ -38,7 +38,7 @@ export function FormGroupMapSelector<T>({
 
     return (
         <View style={formStyles.formGroup}>
-            <Text style={formStyles.label}>Select Location:</Text>
+            <Text style={formStyles.label}>Select Location / City:</Text>
             <MapView
                 style={mediaStyles.map}
                 initialRegion={{

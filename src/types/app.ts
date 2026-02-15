@@ -6,7 +6,7 @@ export interface RouteDefinition {
 
 export interface UploadParams {
   url: string;
-  image: Image;
+  image: Image | null;
   fields: Record<string, string>;
   token: string;
   fieldName?: string;
