@@ -1,15 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPaginatedFoundAnnounce } from "../../services/announceService";
-import { AnnounceType } from "../../types/type";
-
-export const getQueryKeysPaginatedAnnounces = (type: AnnounceType) => {
-  switch (type) {
-    case "found":
-      return "found-announces";
-    case "lost":
-      return "lost-announces";
-  }
-};
 
 export const usePaginatedFound = (
   currentPage: number,

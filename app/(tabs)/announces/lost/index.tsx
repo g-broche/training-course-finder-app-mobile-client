@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,20 +6,17 @@ import NavigationButton from "../../../../src/components/buttons/navigation-butt
 import AnnounceFilterForm from "../../../../src/components/forms/announce-filter-form";
 import Paginator from "../../../../src/components/paginator";
 import ViewTitle from "../../../../src/components/view-title";
-import { getPaginatedLostAnnounce } from "../../../../src/services/announceService";
+import { usePaginatedLost } from "../../../../src/hooks/announce/usePaginatedLost";
 import { containerStyles } from "../../../../src/styles/containerStyles";
 import { SearchAnnounceFilter } from "../../../../src/types/request";
 
 export default function LostIndex() {
   const [currentPage, setCurrentPage] = useState(0);
   const [filter, setFilter] = useState({});
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["lost-announces", currentPage, filter],
-    queryFn: () => getPaginatedLostAnnounce(currentPage, filter),
-    staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: "always",
-  });
+  const { data, isLoading, isError, error } = usePaginatedLost(
+    currentPage,
+    filter,
+  );
   useEffect(() => {
     console.log("announces: ", data);
   }, [data]);

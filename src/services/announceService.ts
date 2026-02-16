@@ -16,6 +16,7 @@ const ENDPOINTS = {
   newFoundAnnounce: "/api/announces/found/new",
   listLostAnnounce: "/api/announces/paginated?type=lost",
   newLostAnnounce: "/api/announces/lost/new",
+  listUserAnnounces: "/api/announces/my-announces",
 };
 
 /**
@@ -186,6 +187,38 @@ export const getPaginatedLostAnnounce = async (
   );
   if (!response.success) {
     throw new Error(response.message || "Failed to retrieve lost announces");
+  }
+  return await response.data;
+};
+
+/**
+ * get page of user's announces
+ * @param page page requested
+ * @param userToken token of active user
+ * @returns Api response containing the results
+ */
+export const getPaginatedUserAnnounces = async (
+  page: number,
+  userToken: string,
+) => {
+  page = Number.isInteger(page) && page >= 0 ? page : 0;
+  const size = AMOUNT_PER_PAGE;
+  const params: Record<string, string | number> = {
+    page,
+    size,
+  };
+  const response = await request(
+    ENDPOINTS.listUserAnnounces,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    },
+    params,
+  );
+  if (!response.success) {
+    throw new Error(response.message || "Failed to retrieve user announces");
   }
   return await response.data;
 };
