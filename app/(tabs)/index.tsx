@@ -8,20 +8,49 @@ import { ErrorState } from "../../src/components/shared/error-state";
 import { LoaderState } from "../../src/components/shared/loader-state";
 import ViewTitle from "../../src/components/view-title";
 import { useAuth } from "../../src/context/AuthContext";
+import { usePaginatedFound } from "../../src/hooks/announce/usePaginatedFound";
+import { usePaginatedLost } from "../../src/hooks/announce/usePaginatedLost";
 import { usePaginatedUserAnnounces } from "../../src/hooks/announce/usePaginatedUserAnnounces";
 import { containerStyles } from "../../src/styles/containerStyles";
 import { textStyles } from "../../src/styles/textStyles";
 
+const PaginationSizeForAnnounces = 4;
+
 export default function Home() {
   const { authState } = useAuth();
   const [currentPage, setCurrentPage] = useState(0);
+  const [foundPage, setFoundPage] = useState(0);
+  const [lostPage, setLostPage] = useState(0);
 
   const {
     data: userAnnounces,
     isLoading,
     isError,
     error,
-  } = usePaginatedUserAnnounces(currentPage);
+  } = usePaginatedUserAnnounces({
+    currentPage,
+    size: PaginationSizeForAnnounces,
+  });
+
+  const {
+    data: latestFound,
+    isLoading: isLoadingFound,
+    isError: isErrorFound,
+    error: errorFound,
+  } = usePaginatedFound({
+    currentPage: foundPage,
+    size: PaginationSizeForAnnounces,
+  });
+
+  const {
+    data: latestLost,
+    isLoading: isLoadingLost,
+    isError: isErrorLost,
+    error: errorLost,
+  } = usePaginatedLost({
+    currentPage: lostPage,
+    size: PaginationSizeForAnnounces,
+  });
 
   const hasLoadedSuccessfully =
     !isLoading && !isError && userAnnounces?.content;
@@ -31,7 +60,7 @@ export default function Home() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={containerStyles.main}>
           <ViewTitle title="Home page" />
-          {authState?.authenticated ? (
+          {authState?.authenticated && (
             <>
               <Text style={textStyles.heading3}>My Announces</Text>
               {isLoading && <LoaderState />}
@@ -58,10 +87,52 @@ export default function Home() {
                 </>
               )}
             </>
-          ) : (
-            <Text style={textStyles.default}>
-              Please log in to view your announces.
-            </Text>
+          )}
+
+          {/* Latest Found Items */}
+          <Text style={textStyles.heading3}>Latest found items</Text>
+          {isLoadingFound && <LoaderState />}
+          {isErrorFound && <ErrorState message={String(errorFound)} />}
+          {!isLoadingFound && !isErrorFound && latestFound?.content && (
+            <>
+              {latestFound.content.length > 0 ? (
+                <>
+                  <AnnounceGrid announces={latestFound.content} />
+                  {latestFound.totalPages && latestFound.totalPages > 1 && (
+                    <Paginator
+                      currentPage={foundPage}
+                      totalPages={latestFound.totalPages}
+                      onPageChange={(pageIndex) => setFoundPage(pageIndex)}
+                    />
+                  )}
+                </>
+              ) : (
+                <EmptyState message="No found item announces available." />
+              )}
+            </>
+          )}
+
+          {/* Latest Lost Items */}
+          <Text style={textStyles.heading3}>Latest lost items</Text>
+          {isLoadingLost && <LoaderState />}
+          {isErrorLost && <ErrorState message={String(errorLost)} />}
+          {!isLoadingLost && !isErrorLost && latestLost?.content && (
+            <>
+              {latestLost.content.length > 0 ? (
+                <>
+                  <AnnounceGrid announces={latestLost.content} />
+                  {latestLost.totalPages && latestLost.totalPages > 1 && (
+                    <Paginator
+                      currentPage={lostPage}
+                      totalPages={latestLost.totalPages}
+                      onPageChange={(pageIndex) => setLostPage(pageIndex)}
+                    />
+                  )}
+                </>
+              ) : (
+                <EmptyState message="No lost item announces available." />
+              )}
+            </>
           )}
         </View>
       </ScrollView>

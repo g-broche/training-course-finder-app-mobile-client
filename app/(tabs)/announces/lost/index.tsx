@@ -13,10 +13,10 @@ import { SearchAnnounceFilter } from "../../../../src/types/request";
 export default function LostIndex() {
   const [currentPage, setCurrentPage] = useState(0);
   const [filter, setFilter] = useState({});
-  const { data, isLoading, isError, error } = usePaginatedLost(
+  const { data, isLoading, isError, error } = usePaginatedLost({
     currentPage,
     filter,
-  );
+  });
   useEffect(() => {
     console.log("announces: ", data);
   }, [data]);

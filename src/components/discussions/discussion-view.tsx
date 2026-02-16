@@ -25,7 +25,7 @@ export function DiscussionView({
     data: detailedDiscussion,
     isLoading,
     isError,
-  } = useDiscussion(discussionId);
+  } = useDiscussion({ announceId: discussionId });
   const isMessageFromUser = (authorDisplayName: string) => {
     return authState?.user?.displayName === authorDisplayName;
   };

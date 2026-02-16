@@ -23,7 +23,7 @@ export default function DiscussionMenu({ announce }: Props) {
     data: discussions,
     isLoading,
     isError,
-  } = useAnnounceDiscussions(announce.id);
+  } = useAnnounceDiscussions({ announceId: announce.id });
 
   useEffect(() => {
     console.log("Announce data:", announce);

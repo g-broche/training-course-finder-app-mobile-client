@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,19 +6,16 @@ import NavigationButton from "../../../../src/components/buttons/navigation-butt
 import AnnounceFilterForm from "../../../../src/components/forms/announce-filter-form";
 import Paginator from "../../../../src/components/paginator";
 import ViewTitle from "../../../../src/components/view-title";
-import { getPaginatedFoundAnnounce } from "../../../../src/services/announceService";
+import { usePaginatedFound } from "../../../../src/hooks/announce/usePaginatedFound";
 import { containerStyles } from "../../../../src/styles/containerStyles";
 import { SearchAnnounceFilter } from "../../../../src/types/request";
 
 export default function FoundIndex() {
   const [currentPage, setCurrentPage] = useState(0);
   const [filter, setFilter] = useState({});
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["found-announces", currentPage, filter],
-    queryFn: () => getPaginatedFoundAnnounce(currentPage, filter),
-    staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: "always",
+  const { data, isLoading, isError, error } = usePaginatedFound({
+    currentPage,
+    filter,
   });
   useEffect(() => {
     console.log("announces: ", data);

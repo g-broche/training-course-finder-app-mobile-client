@@ -87,17 +87,20 @@ export const createNewFoundAnnounce = async (
  * get page of found announces
  * @param page page requested
  * @param filter title query and category filter
+ * @param size number of items per page (optional, defaults to AMOUNT_PER_PAGE)
  * @returns Api response containing the results
  */
 export const getPaginatedFoundAnnounce = async (
   page: number,
   filter: SearchAnnounceFilter = {},
+  size?: number,
 ) => {
   page = Number.isInteger(page) && page >= 0 ? page : 0;
-  const size = AMOUNT_PER_PAGE;
+  const pageSize =
+    size && Number.isInteger(size) && size > 0 ? size : AMOUNT_PER_PAGE;
   const params: Record<string, string | number> = {
     page,
-    size,
+    size: pageSize,
     ...filter,
   };
   const response = await request(
@@ -167,17 +170,20 @@ export const createNewLostAnnounce = async (
  * get page of lost announces
  * @param page page requested
  * @param filter title query and category filter
+ * @param size number of items per page (optional, defaults to AMOUNT_PER_PAGE)
  * @returns Api response containing the results
  */
 export const getPaginatedLostAnnounce = async (
   page: number,
   filter: SearchAnnounceFilter = {},
+  size?: number,
 ) => {
   page = Number.isInteger(page) && page >= 0 ? page : 0;
-  const size = AMOUNT_PER_PAGE;
+  const pageSize =
+    size && Number.isInteger(size) && size > 0 ? size : AMOUNT_PER_PAGE;
   const params: Record<string, string | number> = {
     page,
-    size,
+    size: pageSize,
     ...filter,
   };
   const response = await request(
@@ -200,12 +206,14 @@ export const getPaginatedLostAnnounce = async (
 export const getPaginatedUserAnnounces = async (
   page: number,
   userToken: string,
+  size?: number,
 ) => {
   page = Number.isInteger(page) && page >= 0 ? page : 0;
-  const size = AMOUNT_PER_PAGE;
+  const pageSize =
+    size && Number.isInteger(size) && size > 0 ? size : AMOUNT_PER_PAGE;
   const params: Record<string, string | number> = {
     page,
-    size,
+    size: pageSize,
   };
   const response = await request(
     ENDPOINTS.listUserAnnounces,
