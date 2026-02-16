@@ -7,10 +7,10 @@ import { useForm } from "react-hook-form";
 import { Alert, View } from "react-native";
 import * as yup from "yup";
 import { useAuth } from "../../context/AuthContext";
-import { createNewFoundAnnounce } from "../../services/announceService";
+import { createNewLostAnnounce } from "../../services/announceService";
 import { getAllCategories } from "../../services/categoryService";
 import { formStyles } from "../../styles/formStyles";
-import { FoundItemRequest } from "../../types/request";
+import { LostItemRequest } from "../../types/request";
 import ActionButton from "../buttons/action-button";
 import { FormGroupArea } from "./form-group-area";
 import { FormGroupDate } from "./form-group-date";
@@ -32,9 +32,10 @@ const schema = yup.object().shape({
     .max(1000, "Description cannot exceed 1000 characters"),
   image: yup
     .mixed<File>()
-    .required("Photo is required")
+    .nullable()
+    .optional()
     .test("fileType", "Only image files are allowed", (value) => {
-      if (!value) return false;
+      if (!value) return true; // Optional field
 
       // Normalize common Android issue where type is just 'image' or missing
       const type = value.type;
@@ -51,7 +52,7 @@ const schema = yup.object().shape({
   categoryId: yup.number().required(),
 });
 
-export default function FoundItemForm() {
+export default function LostItemForm() {
   const { authState } = useAuth();
   const router = useRouter();
   const [categories, setCategories] = useState([]);
@@ -61,7 +62,7 @@ export default function FoundItemForm() {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<FoundItemRequest>({
+  } = useForm<LostItemRequest>({
     resolver: yupResolver(schema) as any,
     defaultValues: {
       title: "",
@@ -114,24 +115,26 @@ export default function FoundItemForm() {
       Alert.alert("Unauthorized", "You must be logged in to submit.");
       return;
     }
-    const formData = new FormData();
 
-    const image = {
-      uri: data.image.uri,
-      type: data.image.type,
-      name: data.image.name,
-    };
+    let image = null;
+    if (data.image) {
+      image = {
+        uri: data.image.uri,
+        type: data.image.type,
+        name: data.image.name,
+      };
+    }
 
     try {
-      const newAnnounceResult = await createNewFoundAnnounce(
+      const newAnnounceResult = await createNewLostAnnounce(
         data,
         image,
         authState.token,
       );
 
       console.log(newAnnounceResult);
-      Alert.alert("Success", "Found item announce created successfully!");
-      router.push("/announces/found");
+      Alert.alert("Success", "Lost item announce created successfully!");
+      router.push("/announces/lost");
     } catch (err) {
       console.log("Full error:", err);
       console.log("Error response:", err.response?.data);
@@ -157,7 +160,7 @@ export default function FoundItemForm() {
       <FormGroupArea
         name="description"
         label="Description"
-        placeholder="Enter informations related to the item and its discovery"
+        placeholder="Enter informations related to the lost item"
         control={control}
         errors={errors}
       />
@@ -173,7 +176,7 @@ export default function FoundItemForm() {
         name="image"
         control={control}
         errors={errors}
-        buttonTitle="Select photo of item"
+        buttonTitle="Select photo of item (optional)"
       />
 
       <FormGroupDropdown

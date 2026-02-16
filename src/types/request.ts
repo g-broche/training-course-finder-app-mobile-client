@@ -25,6 +25,18 @@ export interface FoundItemRequest {
   categoryId: number | undefined;
 }
 
+export interface LostItemRequest {
+  title: string;
+  description: string;
+  image?: File | null;
+  latitude: number | null;
+  longitude: number | null;
+  city: string;
+  country: string;
+  relevantDate: Date;
+  categoryId: number | undefined;
+}
+
 export interface SearchAnnounceFilter {
   search?: string;
   categoryId?: number | undefined;
