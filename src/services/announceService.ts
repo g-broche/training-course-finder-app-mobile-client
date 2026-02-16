@@ -16,6 +16,7 @@ const ENDPOINTS = {
   newFoundAnnounce: "/api/announces/found/new",
   listLostAnnounce: "/api/announces/paginated?type=lost",
   newLostAnnounce: "/api/announces/lost/new",
+  listUserAnnounces: "/api/announces/my-announces",
 };
 
 /**
@@ -86,17 +87,20 @@ export const createNewFoundAnnounce = async (
  * get page of found announces
  * @param page page requested
  * @param filter title query and category filter
+ * @param size number of items per page (optional, defaults to AMOUNT_PER_PAGE)
  * @returns Api response containing the results
  */
 export const getPaginatedFoundAnnounce = async (
   page: number,
   filter: SearchAnnounceFilter = {},
+  size?: number,
 ) => {
   page = Number.isInteger(page) && page >= 0 ? page : 0;
-  const size = AMOUNT_PER_PAGE;
+  const pageSize =
+    size && Number.isInteger(size) && size > 0 ? size : AMOUNT_PER_PAGE;
   const params: Record<string, string | number> = {
     page,
-    size,
+    size: pageSize,
     ...filter,
   };
   const response = await request(
@@ -166,17 +170,20 @@ export const createNewLostAnnounce = async (
  * get page of lost announces
  * @param page page requested
  * @param filter title query and category filter
+ * @param size number of items per page (optional, defaults to AMOUNT_PER_PAGE)
  * @returns Api response containing the results
  */
 export const getPaginatedLostAnnounce = async (
   page: number,
   filter: SearchAnnounceFilter = {},
+  size?: number,
 ) => {
   page = Number.isInteger(page) && page >= 0 ? page : 0;
-  const size = AMOUNT_PER_PAGE;
+  const pageSize =
+    size && Number.isInteger(size) && size > 0 ? size : AMOUNT_PER_PAGE;
   const params: Record<string, string | number> = {
     page,
-    size,
+    size: pageSize,
     ...filter,
   };
   const response = await request(
@@ -186,6 +193,40 @@ export const getPaginatedLostAnnounce = async (
   );
   if (!response.success) {
     throw new Error(response.message || "Failed to retrieve lost announces");
+  }
+  return await response.data;
+};
+
+/**
+ * get page of user's announces
+ * @param page page requested
+ * @param userToken token of active user
+ * @returns Api response containing the results
+ */
+export const getPaginatedUserAnnounces = async (
+  page: number,
+  userToken: string,
+  size?: number,
+) => {
+  page = Number.isInteger(page) && page >= 0 ? page : 0;
+  const pageSize =
+    size && Number.isInteger(size) && size > 0 ? size : AMOUNT_PER_PAGE;
+  const params: Record<string, string | number> = {
+    page,
+    size: pageSize,
+  };
+  const response = await request(
+    ENDPOINTS.listUserAnnounces,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    },
+    params,
+  );
+  if (!response.success) {
+    throw new Error(response.message || "Failed to retrieve user announces");
   }
   return await response.data;
 };
