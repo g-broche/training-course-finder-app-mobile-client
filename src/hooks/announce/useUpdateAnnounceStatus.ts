@@ -19,11 +19,11 @@ export const useUpdateAnnounceStatus = ({
     onSuccess: () => {
       // Invalidate queries to refresh the data
       queryClient.invalidateQueries({
-        queryKey: ["announce-details", announceId],
+        queryKey: ["announces"],
       });
-      queryClient.invalidateQueries({ queryKey: ["user-announces"] });
-      queryClient.invalidateQueries({ queryKey: ["found-announces"] });
-      queryClient.invalidateQueries({ queryKey: ["lost-announces"] });
+      queryClient.invalidateQueries({
+        queryKey: ["announce", announceId],
+      });
     },
   });
 };

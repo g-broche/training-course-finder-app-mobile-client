@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Text, View, ViewStyle } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { useDiscussion } from "../../hooks/discussion/useDiscussions";
@@ -14,11 +13,13 @@ import { MessageCard } from "./message-card";
 interface DiscussionViewProps {
   discussionId: string;
   announceAuthorDisplayName: string;
+  isAnnounceInteractivityOpen?: boolean;
 }
 
 export function DiscussionView({
   discussionId,
   announceAuthorDisplayName,
+  isAnnounceInteractivityOpen = false,
 }: DiscussionViewProps) {
   const { authState } = useAuth();
   const {
@@ -41,9 +42,9 @@ export function DiscussionView({
     };
   };
 
-  useEffect(() => {
-    console.log("Detailed discussion data:", detailedDiscussion);
-  }, [detailedDiscussion]);
+  const doesAllowReply =
+    isAnnounceInteractivityOpen &&
+    detailedDiscussion?.interactivityStateName === "open";
 
   if (isLoading) {
     return <LoaderState />;
@@ -77,11 +78,15 @@ export function DiscussionView({
             />
           ))}
         </View>
-        <MessageForm
-          announceId={detailedDiscussion.announceId}
-          discussionId={detailedDiscussion.discussionId}
-          isDiscussionStarter={false}
-        />
+        {doesAllowReply ? (
+          <MessageForm
+            announceId={detailedDiscussion.announceId}
+            discussionId={detailedDiscussion.discussionId}
+            isDiscussionStarter={false}
+          />
+        ) : (
+          <Text style={textStyles.default}>This announce is closed</Text>
+        )}
       </View>
     );
   }

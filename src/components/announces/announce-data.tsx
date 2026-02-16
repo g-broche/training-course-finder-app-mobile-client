@@ -114,20 +114,19 @@ export default function AnnounceData({ announce }: Props) {
           </View>
           <View style={styles.actionWrapper}>
             <Text style={textStyles.default}>
-              Interactivity state: {announce.interactivityState}
+              Announce is{" "}
+              {announce.interactivityState === "open" ? "open" : "closed"}
             </Text>
             {announce.interactivityState === "open" ? (
               <ActionButton
                 title={
-                  isInteractivityPending ? "Updating..." : "Close Discussions"
+                  isInteractivityPending ? "Updating..." : "Close announce"
                 }
                 callback={() => handleInteractivityUpdate("close")}
               />
             ) : (
               <ActionButton
-                title={
-                  isInteractivityPending ? "Updating..." : "Open Discussions"
-                }
+                title={isInteractivityPending ? "Updating..." : "Open announce"}
                 callback={() => handleInteractivityUpdate("open")}
               />
             )}
