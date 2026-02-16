@@ -40,6 +40,7 @@ export interface LostItemRequest {
 export interface SearchAnnounceFilter {
   search?: string;
   categoryId?: number | undefined;
+  city?: string;
 }
 
 export interface NewMessageRequest {

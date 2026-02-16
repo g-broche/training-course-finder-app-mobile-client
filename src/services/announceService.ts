@@ -33,16 +33,18 @@ export const formatFilterFromForm = (
     typeof filter.categoryId === "number" &&
     Number.isInteger(filter.categoryId) &&
     filter.categoryId > 0;
-  if (!searchIsValid && !categoryIsValid) {
+  const cityIsValid = typeof filter.city === "string" && filter.city.length > 0;
+
+  if (!searchIsValid && !categoryIsValid && !cityIsValid) {
     return {};
   }
-  if (!categoryIsValid) {
-    return { search: filter.search };
-  }
-  return {
-    search: filter.search,
-    categoryId: filter.categoryId,
-  };
+
+  const result: SearchAnnounceFilter = {};
+  if (searchIsValid) result.search = filter.search;
+  if (categoryIsValid) result.categoryId = filter.categoryId;
+  if (cityIsValid) result.city = filter.city;
+
+  return result;
 };
 
 /**
