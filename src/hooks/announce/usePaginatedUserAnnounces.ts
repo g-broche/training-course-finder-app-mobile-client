@@ -12,7 +12,7 @@ export const usePaginatedUserAnnounces = ({
   size,
 }: UsePaginatedUserAnnouncesProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.token || "";
+  const userToken = authState?.accessToken || "";
 
   return useQuery({
     queryKey: ["announces", "user-announces", currentPage],

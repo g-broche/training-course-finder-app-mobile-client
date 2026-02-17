@@ -10,7 +10,7 @@ export const useUpdateAnnounceInteractivity = ({
   announceId,
 }: UseUpdateAnnounceInteractivityProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.token || "";
+  const userToken = authState?.accessToken || "";
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -13,7 +13,7 @@ export const useReportMessage = ({
   messageId,
 }: useReportMessageProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.token || "";
+  const userToken = authState?.accessToken || "";
   return useMutation({
     mutationFn: () => reportMessage(discussionId, messageId, userToken),
     onSuccess: () => {

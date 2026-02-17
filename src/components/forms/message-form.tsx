@@ -77,7 +77,7 @@ export default function MessageForm({
   }, []);
 
   const onSubmit = async (data: NewMessageRequest) => {
-    if (!authState?.token) {
+    if (!authState?.accessToken) {
       Alert.alert("Unauthorized", "You must be logged in to send a message.");
       return;
     }

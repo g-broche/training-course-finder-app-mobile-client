@@ -11,7 +11,7 @@ export const useContinueDiscussion = ({
   discussionId,
 }: useContinueDiscussionProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.token || "";
+  const userToken = authState?.accessToken || "";
   const queryClient = useQueryClient();
 
   return useMutation({

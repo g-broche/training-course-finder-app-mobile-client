@@ -10,7 +10,7 @@ interface useStartDiscussionProps {
 
 export const useStartDiscussion = ({ announceId }: useStartDiscussionProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.token || "";
+  const userToken = authState?.accessToken || "";
 
   return useMutation({
     mutationFn: (payload: NewMessageRequest) =>

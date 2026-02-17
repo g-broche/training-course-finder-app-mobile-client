@@ -10,7 +10,7 @@ export const useUpdateAnnounceStatus = ({
   announceId,
 }: UseUpdateAnnounceStatusProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.token || "";
+  const userToken = authState?.accessToken || "";
   const queryClient = useQueryClient();
 
   return useMutation({

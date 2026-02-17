@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Alert, View } from "react-native";
 import * as yup from "yup";
 import { useAuth } from "../../context/AuthContext";
-import { createNewLostAnnounce } from "../../services/announceService";
+import { useCreateLostAnnounce } from "../../hooks/announce/useCreateLostAnnounce";
 import { getAllCategories } from "../../services/categoryService";
 import { formStyles } from "../../styles/formStyles";
 import { LostItemRequest } from "../../types/request";
@@ -56,6 +56,7 @@ export default function LostItemForm() {
   const { authState } = useAuth();
   const router = useRouter();
   const [categories, setCategories] = useState([]);
+  const { mutate: createLostAnnounce, isPending } = useCreateLostAnnounce();
 
   const {
     control,
@@ -110,8 +111,8 @@ export default function LostItemForm() {
     }
   };
 
-  const onSubmit = async (data) => {
-    if (!authState?.token) {
+  const onSubmit = (data) => {
+    if (!authState?.accessToken) {
       Alert.alert("Unauthorized", "You must be logged in to submit.");
       return;
     }
@@ -125,22 +126,22 @@ export default function LostItemForm() {
       };
     }
 
-    try {
-      const newAnnounceResult = await createNewLostAnnounce(
-        data,
-        image,
-        authState.token,
-      );
-
-      console.log(newAnnounceResult);
-      Alert.alert("Success", "Lost item announce created successfully!");
-      router.push("/announces/lost");
-    } catch (err) {
-      console.log("Full error:", err);
-      console.log("Error response:", err.response?.data);
-      console.log("Error status:", err.response?.status);
-      Alert.alert("Error", "Submission failed.");
-    }
+    createLostAnnounce(
+      { data, image },
+      {
+        onSuccess: (result) => {
+          console.log(result);
+          Alert.alert("Success", "Lost item announce created successfully!");
+          router.push("/announces/lost");
+        },
+        onError: (err: any) => {
+          console.log("Full error:", err);
+          console.log("Error response:", err.response?.data);
+          console.log("Error status:", err.response?.status);
+          Alert.alert("Error", "Submission failed.");
+        },
+      },
+    );
   };
 
   useEffect(() => {
@@ -200,7 +201,11 @@ export default function LostItemForm() {
         lngField="longitude"
       />
 
-      <ActionButton title="Submit" callback={handleSubmit(onSubmit)} />
+      <ActionButton
+        title="Submit"
+        callback={handleSubmit(onSubmit)}
+        disabled={isPending}
+      />
     </View>
   );
 }
