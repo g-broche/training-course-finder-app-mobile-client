@@ -1,48 +1,71 @@
 import { jwtDecode } from "jwt-decode";
-import { request } from "./base-api-service";
-import * as SecureStore from 'expo-secure-store';
-import { Credentials, SignUpData } from "../types/request";
-import { LoggedUser } from "../types/dto";
 import { ApiResponse } from "../types/api-interface";
+import { LoggedUser } from "../types/dto";
+import { Credentials, SignUpData } from "../types/request";
+import { request } from "./base-api-service";
 
 const ENDPOINTS = {
-    register: '/api/auth/signup',
-    login: '/api/auth/signin'
-}
+  register: "/api/auth/signup",
+  login: "/api/auth/signin",
+  logout: "/api/auth/signoff",
+  refresh: "/api/auth/refresh",
+};
 
-export const registerUser = async (payload: SignUpData): Promise<ApiResponse> => {
-    return await request(ENDPOINTS.register, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-    });
-}
+export const registerUser = async (
+  payload: SignUpData,
+): Promise<ApiResponse> => {
+  return await request(ENDPOINTS.register, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+};
 
-export const loginUser = async (credentials: Credentials): Promise<ApiResponse> => {
-    return await request(ENDPOINTS.login, {
-        method: 'POST',
-        body: JSON.stringify(credentials),
-    });
-}
+export const loginUser = async (
+  credentials: Credentials,
+): Promise<ApiResponse> => {
+  return await request(ENDPOINTS.login, {
+    method: "POST",
+    body: JSON.stringify(credentials),
+  });
+};
+
+export const logoutUser = async (
+  refreshToken: string,
+): Promise<ApiResponse> => {
+  return await request(ENDPOINTS.logout, {
+    method: "POST",
+    body: JSON.stringify({ refreshToken }),
+  });
+};
+
+export const refreshAccessToken = async (
+  refreshToken: string,
+): Promise<ApiResponse> => {
+  return await request(ENDPOINTS.refresh, {
+    method: "POST",
+    body: JSON.stringify({ refreshToken }),
+  });
+};
 
 export const getUserFromToken = (token: string): LoggedUser | null => {
-    if (token === undefined || token === null || token.length === 0) return null;
+  if (token === undefined || token === null || token.length === 0) return null;
 
-    try {
-        const decoded: any = jwtDecode(token);
-        const user: LoggedUser = {
-            uuid: decoded.uuid,
-            email: decoded.sub,
-            roles: decoded.roles,
-            firstName: decoded.firstName,
-            lastName: decoded.lastName,
-            displayName: decoded.displayName,
-            isVerified: decoded.isVerified,
-            hasAcceptedGdpr: decoded.hasAcceptedGdpr,
-            userCreatedAt: new Date(decoded.userCreatedAt),
-        };
-        return user;
-    } catch (error) {
-        console.error('Failed to decode token:', error);
-        return null;
-    }
+  try {
+    const decoded: any = jwtDecode(token);
+    const user: LoggedUser = {
+      uuid: decoded.uuid,
+      email: decoded.sub,
+      roles: decoded.roles,
+      firstName: decoded.firstName,
+      lastName: decoded.lastName,
+      displayName: decoded.displayName,
+      isVerified: decoded.isVerified,
+      hasAcceptedGdpr: decoded.hasAcceptedGdpr,
+      userCreatedAt: new Date(decoded.userCreatedAt),
+    };
+    return user;
+  } catch (error) {
+    console.error("Failed to decode token:", error);
+    return null;
+  }
 };

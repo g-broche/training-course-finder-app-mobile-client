@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useQuery } from "@tanstack/react-query";
 import AnnounceData from "../../../../src/components/announces/announce-data";
+import NavigationButton from "../../../../src/components/buttons/navigation-button";
 import ChatMenu from "../../../../src/components/discussions/discussion-menu";
 import ErrorText from "../../../../src/components/error-text";
 import { getAnnounceDetails } from "../../../../src/services/announceService";
@@ -23,6 +24,10 @@ export default function AnnounceDetails() {
     <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={containerStyles.main}>
+          <NavigationButton
+            title="Back to Found Items"
+            pathname="announces/found"
+          />
           {isLoading && <ActivityIndicator />}
           {isError && <ErrorText error={error} />}
           {!isLoading && data && (

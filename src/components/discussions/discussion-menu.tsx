@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { useAnnounceDiscussions } from "../../hooks/discussion/useAnnounceDiscussions";
@@ -24,15 +23,7 @@ export default function DiscussionMenu({ announce }: Props) {
     isLoading,
     isError,
   } = useAnnounceDiscussions({ announceId: announce.id });
-
-  useEffect(() => {
-    console.log("Announce data:", announce);
-  }, [announce]);
-
-  useEffect(() => {
-    console.log("Discussions data:", discussions);
-  }, [discussions]);
-
+  const isOpen = announce.interactivityState === "open";
   if (!!authState && authState.user == null) {
     return <GuestChatInterface />;
   }
@@ -63,7 +54,10 @@ export default function DiscussionMenu({ announce }: Props) {
             >
               Open discussions
             </Text>
-            <AnnounceAuthorChatInterface discussions={discussions} />
+            <AnnounceAuthorChatInterface
+              discussions={discussions}
+              isAnnounceInteractivityOpen={isOpen}
+            />
           </>
         )}
       </View>
@@ -77,13 +71,17 @@ export default function DiscussionMenu({ announce }: Props) {
   ) {
     return (
       <View style={styles.container}>
-        {discussions?.length === 0 && (
+        {discussions?.length === 0 && isOpen && (
           <MessageForm announceId={announce.id} isDiscussionStarter={true} />
+        )}
+        {discussions?.length === 0 && !isOpen && (
+          <EmptyState message="This announce is closed" />
         )}
         {discussions?.length > 0 && (
           <DiscussionView
             discussionId={discussions[0].discussionId}
             announceAuthorDisplayName={announce.author.displayName}
+            isAnnounceInteractivityOpen={isOpen}
           />
         )}
       </View>

@@ -8,7 +8,7 @@ interface UseDiscussionProps {
 
 export const useDiscussion = ({ announceId }: UseDiscussionProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.token || "";
+  const userToken = authState?.accessToken || "";
 
   return useQuery({
     queryKey: ["discussion", announceId],

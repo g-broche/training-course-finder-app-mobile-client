@@ -5,15 +5,18 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { invalidateAllQueries } from "../core/queryClient";
 import {
-    getUserFromToken,
-    loginUser,
-    registerUser,
+  getUserFromToken,
+  loginUser,
+  logoutUser,
+  registerUser,
 } from "../services/authService";
+import { setTokenHandlers } from "../services/base-api-service";
 import { LoggedUser } from "../types/dto";
 import { Credentials, SignUpData } from "../types/request";
 
 interface AuthState {
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   authenticated: boolean | null;
   user: LoggedUser | null;
 }
@@ -25,7 +28,8 @@ interface AuthProps {
   onLogout?: () => Promise<void>;
 }
 
-const TOKEN_KEY = "jwt";
+const ACCESS_TOKEN_KEY = "accessToken";
+const REFRESH_TOKEN_KEY = "refreshToken";
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -34,33 +38,62 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<AuthState>({
-    token: null,
+    accessToken: null,
+    refreshToken: null,
     authenticated: null,
     user: null,
   });
 
-  useEffect(() => {
-    const loadToken = async () => {
-      const token = await SecureStore.getItemAsync(TOKEN_KEY);
+  // Function to update tokens (used by refresh logic in base-api-service)
+  const updateTokens = async (accessToken: string, refreshToken: string) => {
+    await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
+    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+    const user = getUserFromToken(accessToken);
+    setAuthState({
+      accessToken,
+      refreshToken,
+      authenticated: true,
+      user,
+    });
+  };
 
-      if (token) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        const user = getUserFromToken(token);
+  // Register token handlers for base-api-service
+  useEffect(() => {
+    setTokenHandlers(
+      () => ({
+        accessToken: authState.accessToken,
+        refreshToken: authState.refreshToken,
+      }),
+      updateTokens,
+    );
+  }, [authState.accessToken, authState.refreshToken]);
+
+  useEffect(() => {
+    const loadTokens = async () => {
+      const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
+      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+
+      if (accessToken) {
+        axios.defaults.headers.common["Authorization"] =
+          `Bearer ${accessToken}`;
+        const user = getUserFromToken(accessToken);
         setAuthState({
-          token,
+          accessToken,
+          refreshToken,
           authenticated: true,
           user,
         });
       } else {
         setAuthState({
-          token: null,
+          accessToken: null,
+          refreshToken: null,
           authenticated: false,
           user: null,
         });
       }
     };
 
-    loadToken();
+    loadTokens();
   }, []);
 
   const register = async (data: SignUpData): Promise<void> => {
@@ -68,9 +101,12 @@ export const AuthProvider = ({ children }: any) => {
       const response = await registerUser(data);
       const isAuthResponseValid =
         response.success &&
-        response.data.jwt &&
-        typeof response.data.jwt === "string" &&
-        response.data.jwt.length > 0;
+        response.data.accessToken &&
+        response.data.refreshToken &&
+        typeof response.data.accessToken === "string" &&
+        typeof response.data.refreshToken === "string" &&
+        response.data.accessToken.length > 0 &&
+        response.data.refreshToken.length > 0;
       if (!isAuthResponseValid) {
         Alert.alert(
           "Sign up error",
@@ -78,16 +114,19 @@ export const AuthProvider = ({ children }: any) => {
         );
         return;
       }
-      const token = response.data.jwt;
-      await SecureStore.setItemAsync(TOKEN_KEY, token);
-      const loggedUser = getUserFromToken(token);
+      const accessToken = response.data.accessToken;
+      const refreshToken = response.data.refreshToken;
+      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
+      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+      const loggedUser = getUserFromToken(accessToken);
       setAuthState({
-        token: token,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
         authenticated: true,
         user: loggedUser,
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       Alert.alert("Sign up error", "Unknown error occured during sign up");
     }
   };
@@ -95,36 +134,43 @@ export const AuthProvider = ({ children }: any) => {
   const login = async (credentials: Credentials) => {
     try {
       const response = await loginUser(credentials);
-      console.log("login response", response);
       const isAuthResponseValid =
         response.success &&
-        response.data.jwt &&
-        typeof response.data.jwt === "string" &&
-        response.data.jwt.length > 0;
+        response.data.accessToken &&
+        response.data.refreshToken &&
+        typeof response.data.accessToken === "string" &&
+        typeof response.data.refreshToken === "string" &&
+        response.data.accessToken.length > 0 &&
+        response.data.refreshToken.length > 0;
       if (!isAuthResponseValid) {
         const message =
           response.message || "Unknown error occured during sign in";
-        console.log("should display error");
         Alert.alert("Sign in error", message);
         return;
       }
-      const token = response.data.jwt;
-      await SecureStore.setItemAsync(TOKEN_KEY, token);
-      const loggedUser = getUserFromToken(token);
+      const accessToken = response.data.accessToken;
+      const refreshToken = response.data.refreshToken;
+      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
+      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+      const loggedUser = getUserFromToken(accessToken);
       setAuthState({
-        token: token,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
         authenticated: true,
         user: loggedUser,
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await logoutUser(authState?.refreshToken || "");
+    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
     setAuthState({
-      token: null,
+      accessToken: null,
+      refreshToken: null,
       authenticated: false,
       user: null,
     });

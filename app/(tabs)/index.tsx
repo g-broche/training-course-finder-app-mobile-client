@@ -8,8 +8,8 @@ import { ErrorState } from "../../src/components/shared/error-state";
 import { LoaderState } from "../../src/components/shared/loader-state";
 import ViewTitle from "../../src/components/view-title";
 import { useAuth } from "../../src/context/AuthContext";
-import { usePaginatedFound } from "../../src/hooks/announce/usePaginatedFound";
-import { usePaginatedLost } from "../../src/hooks/announce/usePaginatedLost";
+import { usePaginatedFoundLatest } from "../../src/hooks/announce/usePaginatedFoundLatest";
+import { usePaginatedLostLatest } from "../../src/hooks/announce/usePaginatedLostLatest";
 import { usePaginatedUserAnnounces } from "../../src/hooks/announce/usePaginatedUserAnnounces";
 import { containerStyles } from "../../src/styles/containerStyles";
 import { textStyles } from "../../src/styles/textStyles";
@@ -37,7 +37,7 @@ export default function Home() {
     isLoading: isLoadingFound,
     isError: isErrorFound,
     error: errorFound,
-  } = usePaginatedFound({
+  } = usePaginatedFoundLatest({
     currentPage: foundPage,
     size: PaginationSizeForAnnounces,
   });
@@ -47,7 +47,7 @@ export default function Home() {
     isLoading: isLoadingLost,
     isError: isErrorLost,
     error: errorLost,
-  } = usePaginatedLost({
+  } = usePaginatedLostLatest({
     currentPage: lostPage,
     size: PaginationSizeForAnnounces,
   });

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Alert, View } from "react-native";
 import * as yup from "yup";
 import { useAuth } from "../../context/AuthContext";
-import { createNewFoundAnnounce } from "../../services/announceService";
+import { useCreateFoundAnnounce } from "../../hooks/announce/useCreateFoundAnnounce";
 import { getAllCategories } from "../../services/categoryService";
 import { formStyles } from "../../styles/formStyles";
 import { FoundItemRequest } from "../../types/request";
@@ -55,6 +55,7 @@ export default function FoundItemForm() {
   const { authState } = useAuth();
   const router = useRouter();
   const [categories, setCategories] = useState([]);
+  const { mutate: createFoundAnnounce, isPending } = useCreateFoundAnnounce();
 
   const {
     control,
@@ -109,12 +110,11 @@ export default function FoundItemForm() {
     }
   };
 
-  const onSubmit = async (data) => {
-    if (!authState?.token) {
+  const onSubmit = (data) => {
+    if (!authState?.accessToken) {
       Alert.alert("Unauthorized", "You must be logged in to submit.");
       return;
     }
-    const formData = new FormData();
 
     const image = {
       uri: data.image.uri,
@@ -122,22 +122,22 @@ export default function FoundItemForm() {
       name: data.image.name,
     };
 
-    try {
-      const newAnnounceResult = await createNewFoundAnnounce(
-        data,
-        image,
-        authState.token,
-      );
-
-      console.log(newAnnounceResult);
-      Alert.alert("Success", "Found item announce created successfully!");
-      router.push("/announces/found");
-    } catch (err) {
-      console.log("Full error:", err);
-      console.log("Error response:", err.response?.data);
-      console.log("Error status:", err.response?.status);
-      Alert.alert("Error", "Submission failed.");
-    }
+    createFoundAnnounce(
+      { data, image },
+      {
+        onSuccess: (result) => {
+          console.log(result);
+          Alert.alert("Success", "Found item announce created successfully!");
+          router.push("/announces/found");
+        },
+        onError: (err: any) => {
+          console.log("Full error:", err);
+          console.log("Error response:", err.response?.data);
+          console.log("Error status:", err.response?.status);
+          Alert.alert("Error", "Submission failed.");
+        },
+      },
+    );
   };
 
   useEffect(() => {
@@ -197,7 +197,11 @@ export default function FoundItemForm() {
         lngField="longitude"
       />
 
-      <ActionButton title="Submit" callback={handleSubmit(onSubmit)} />
+      <ActionButton
+        title="Submit"
+        callback={handleSubmit(onSubmit)}
+        disabled={isPending}
+      />
     </View>
   );
 }

@@ -15,10 +15,12 @@ import { DiscussionView } from "./discussion-view";
 
 interface AnnounceAuthorDiscussionInterfaceProps {
   discussions: Discussion[];
+  isAnnounceInteractivityOpen: boolean;
 }
 
 export default function AnnounceAuthorDiscussionInterface({
   discussions,
+  isAnnounceInteractivityOpen,
 }: AnnounceAuthorDiscussionInterfaceProps) {
   const [selectedDiscussion, setSelectedDiscussion] =
     useState<Discussion | null>(null);
@@ -72,6 +74,7 @@ export default function AnnounceAuthorDiscussionInterface({
                 announceAuthorDisplayName={
                   selectedDiscussion.announceAuthor.displayName
                 }
+                isAnnounceInteractivityOpen={isAnnounceInteractivityOpen}
               />
             )}
           </ScrollView>

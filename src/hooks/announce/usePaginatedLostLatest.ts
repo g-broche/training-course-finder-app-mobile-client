@@ -1,19 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPaginatedLostAnnounce } from "../../services/announceService";
 
-interface UsePaginatedLostProps {
+interface UsePaginatedLostLatestProps {
   currentPage: number;
   filter?: Record<string, any>;
   size?: number;
 }
 
-export const usePaginatedLost = ({
+export const usePaginatedLostLatest = ({
   currentPage,
   filter = {},
   size,
-}: UsePaginatedLostProps) => {
+}: UsePaginatedLostLatestProps) => {
   return useQuery({
-    queryKey: ["announces", "lost-announces", currentPage, filter],
+    queryKey: ["announces", "latest-lost-announces", currentPage, filter],
     queryFn: () => getPaginatedLostAnnounce(currentPage, filter, size),
   });
 };

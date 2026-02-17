@@ -232,3 +232,59 @@ export const getPaginatedUserAnnounces = async (
   }
   return await response.data;
 };
+
+/**
+ * Update the status of an announce
+ * @param announceId UUID of the announce
+ * @param announceStatus New status ("solved" | "unsolved")
+ * @param userToken token of active user
+ * @returns Api response
+ */
+export const updateAnnounceStatus = async (
+  announceId: string,
+  announceStatus: "solved" | "unsolved",
+  userToken: string,
+) => {
+  const requestUri = `/api/announces/${announceId}/update/status`;
+  const response = await request(requestUri, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${userToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ announceStatus }),
+  });
+  if (!response.success) {
+    throw new Error(response.message || "Failed to update announce status");
+  }
+  return await response.data;
+};
+
+/**
+ * Update the interactivity state of an announce
+ * @param announceId UUID of the announce
+ * @param interactivityState New state ("open" | "close")
+ * @param userToken token of active user
+ * @returns Api response
+ */
+export const updateAnnounceInteractivity = async (
+  announceId: string,
+  interactivityState: "open" | "close",
+  userToken: string,
+) => {
+  const requestUri = `/api/announces/${announceId}/update/interactivity`;
+  const response = await request(requestUri, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${userToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ interactivityState }),
+  });
+  if (!response.success) {
+    throw new Error(
+      response.message || "Failed to update announce interactivity",
+    );
+  }
+  return await response.data;
+};

@@ -7,12 +7,14 @@ interface ActionButtonProps {
   title: string;
   size?: ButtonSizes;
   callback: (...args: any[]) => any;
+  disabled?: boolean;
 }
 
 export default function ActionButton({
   title,
   size = "default",
   callback,
+  disabled = false,
 }: ActionButtonProps) {
   const style = () => {
     switch (size) {
@@ -27,7 +29,11 @@ export default function ActionButton({
     }
   };
   return (
-    <TouchableOpacity style={style()} onPress={() => callback()}>
+    <TouchableOpacity
+      style={[style(), disabled && { opacity: 0.5 }]}
+      onPress={() => callback()}
+      disabled={disabled}
+    >
       <Text style={buttonStyles.label}>{title}</Text>
     </TouchableOpacity>
   );
