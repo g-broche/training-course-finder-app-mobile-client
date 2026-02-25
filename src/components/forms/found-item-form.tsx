@@ -11,7 +11,7 @@ import { useCreateFoundAnnounce } from "../../hooks/announce/useCreateFoundAnnou
 import { getAllCategories } from "../../services/categoryService";
 import { formStyles } from "../../styles/formStyles";
 import { FoundItemRequest } from "../../types/request";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
 import { FormGroupArea } from "./form-group-area";
 import { FormGroupDate } from "./form-group-date";
 import { FormGroupDropdown } from "./form-group-dropdown";
@@ -182,6 +182,7 @@ export default function FoundItemForm() {
         placeholder="Select category..."
         control={control}
         errors={errors}
+        isNullable={false}
         options={categories.map((cat) => ({
           label: cat.name,
           value: cat.id,

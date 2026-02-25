@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity } from "react-native";
-import { buttonStyles } from "../../styles/buttonStyles";
+import { buttonStyles } from "../../../styles/buttonStyles";
 
 type ButtonSizes = "default" | "wide" | "full";
 

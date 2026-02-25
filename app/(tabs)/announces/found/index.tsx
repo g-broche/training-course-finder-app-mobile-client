@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AnnounceGrid from "../../../../src/components/announces/announce-grid";
-import NavigationButton from "../../../../src/components/buttons/navigation-button";
 import AnnounceFilterForm from "../../../../src/components/forms/announce-filter-form";
-import Paginator from "../../../../src/components/paginator";
-import ViewTitle from "../../../../src/components/view-title";
+import NavigationButton from "../../../../src/components/shared/buttons/navigation-button";
+import Paginator from "../../../../src/components/shared/paginator";
+import ViewTitle from "../../../../src/components/shared/view-title";
 import { usePaginatedFound } from "../../../../src/hooks/announce/usePaginatedFound";
 import { containerStyles } from "../../../../src/styles/containerStyles";
 import { SearchAnnounceFilter } from "../../../../src/types/request";
@@ -31,7 +31,7 @@ export default function FoundIndex() {
           <ViewTitle title="Found items" />
           <NavigationButton
             title="Report found item"
-            pathname="announces/found/submit"
+            pathname="/announces/found/submit"
           ></NavigationButton>
           <AnnounceFilterForm
             onFilterSubmit={(filter) => updateSearch(filter)}

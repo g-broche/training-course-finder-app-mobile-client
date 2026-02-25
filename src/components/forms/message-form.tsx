@@ -8,7 +8,7 @@ import { useContinueDiscussion } from "../../hooks/discussion/useContinueDiscuss
 import { useStartDiscussion } from "../../hooks/discussion/useStartDiscussions";
 import { DIMENSIONS } from "../../styles/constants/dimensions";
 import { NewMessageRequest } from "../../types/request";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
 import { FormGroupArea } from "./form-group-area";
 
 interface MessageFormProps {

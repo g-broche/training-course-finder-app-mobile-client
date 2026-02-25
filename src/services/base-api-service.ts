@@ -3,8 +3,7 @@ import { ApiResponse } from "../types/api-interface";
 import { UploadParams } from "../types/app";
 import { isApiResponse } from "../utils/typeGuard";
 
-const API_BASE_URL =
-  Constants.expoConfig?.extra?.API_BASE_URL || "http://10.51.163.145:8080/api";
+const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
 
 // Token management for refresh logic
 let tokenGetter:
@@ -19,6 +18,16 @@ let failedQueue: {
   reject: (error: any) => void;
 }[] = [];
 
+// Function to set token handlers, called from AuthContext
+export const setTokenHandlers = (
+  getter: () => { accessToken: string | null; refreshToken: string | null },
+  setter: (accessToken: string, refreshToken: string) => Promise<void>,
+) => {
+  tokenGetter = getter;
+  tokenSetter = setter;
+};
+
+// Helper to process the queue of failed requests after token refresh attempt
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -28,14 +37,6 @@ const processQueue = (error: any, token: string | null = null) => {
     }
   });
   failedQueue = [];
-};
-
-export const setTokenHandlers = (
-  getter: () => { accessToken: string | null; refreshToken: string | null },
-  setter: (accessToken: string, refreshToken: string) => Promise<void>,
-) => {
-  tokenGetter = getter;
-  tokenSetter = setter;
 };
 
 export const buildUrl = (

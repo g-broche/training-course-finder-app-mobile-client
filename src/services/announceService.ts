@@ -28,7 +28,7 @@ export const formatFilterFromForm = (
   filter: SearchAnnounceFilter = {},
 ): SearchAnnounceFilter => {
   const searchIsValid =
-    typeof filter.search === "string" && filter.search.length > 0;
+    typeof filter.title === "string" && filter.title.length > 0;
   const categoryIsValid =
     typeof filter.categoryId === "number" &&
     Number.isInteger(filter.categoryId) &&
@@ -40,7 +40,7 @@ export const formatFilterFromForm = (
   }
 
   const result: SearchAnnounceFilter = {};
-  if (searchIsValid) result.search = filter.search;
+  if (searchIsValid) result.title = filter.title;
   if (categoryIsValid) result.categoryId = filter.categoryId;
   if (cityIsValid) result.city = filter.city;
 

@@ -1,6 +1,8 @@
+import { Href } from "expo-router";
+
 export interface RouteDefinition {
   title: string;
-  pathname: string; // "/announces/[id]/discussion/[discussionId]"
+  pathname: Href; // typed route paths from expo-router
   params?: Record<string, string>; // { id: '123', discussionId: '456' }
 }
 

@@ -1,37 +1,44 @@
-import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { Text, View, Pressable, StyleSheet } from 'react-native';
-import { useNavigation, DrawerActions } from '@react-navigation/native';
-import { useRouter, usePathname } from 'expo-router';
-import { drawerStyles } from '../styles/drawerStyles';
+import { DrawerContentScrollView } from "@react-navigation/drawer";
+import { DrawerActions } from "@react-navigation/native";
+import { Href, usePathname, useRouter } from "expo-router";
+import { Pressable, Text } from "react-native";
+import { drawerStyles } from "../styles/drawerStyles";
 
 export default function CustomDrawerContent(props: any) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const drawerItems = [
-    { label: 'Home', route: '/home' },
-    { label: 'Found', route: '/found' },
-    { label: 'Lost', route: '/lost' },
+  const drawerItems: { label: string; route: Href }[] = [
+    { label: "Home", route: "/" },
+    { label: "Found", route: "/announces/found" },
+    { label: "Lost", route: "/announces/lost" },
   ];
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={drawerStyles.drawer}>
+    <DrawerContentScrollView
+      {...props}
+      contentContainerStyle={drawerStyles.drawer}
+    >
       {drawerItems.map(({ label, route }) => {
         const isActive =
-          route === '/home'
-            ? pathname === '/' || pathname === '/home'
-            : pathname === route;
+          route === "/"
+            ? pathname === "/" || pathname === "/(tabs)"
+            : pathname.startsWith(route as string);
 
         return (
           <Pressable
-            key={route}
+            key={String(route)}
             onPress={() => {
               router.push(route);
               props.navigation.dispatch(DrawerActions.closeDrawer());
             }}
             style={drawerStyles.item}
           >
-            <Text style={[drawerStyles.label, isActive && drawerStyles.activeLabel]}>{label}</Text>
+            <Text
+              style={[drawerStyles.label, isActive && drawerStyles.activeLabel]}
+            >
+              {label}
+            </Text>
           </Pressable>
         );
       })}

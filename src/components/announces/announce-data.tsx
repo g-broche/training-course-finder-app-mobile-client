@@ -9,13 +9,13 @@ import { textStyles } from "../../styles/textStyles";
 import { Announce } from "../../types/dto";
 import { AnnounceStatus, InteractivityState } from "../../types/type";
 import {
-    isAnnounceTypeFound,
-    isImageIncludedInAnnounce,
+  isAnnounceTypeFound,
+  isImageIncludedInAnnounce,
 } from "../../utils/dtoUtil";
 import { formatDate } from "../../utils/pipe";
-import ActionButton from "../buttons/action-button";
 import MapDisplay from "../map-display";
-import ViewTitle from "../view-title";
+import ActionButton from "../shared/buttons/action-button";
+import ViewTitle from "../shared/view-title";
 
 type Props = {
   announce: Announce;

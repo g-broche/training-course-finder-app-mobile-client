@@ -11,7 +11,7 @@ import { useCreateLostAnnounce } from "../../hooks/announce/useCreateLostAnnounc
 import { getAllCategories } from "../../services/categoryService";
 import { formStyles } from "../../styles/formStyles";
 import { LostItemRequest } from "../../types/request";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
 import { FormGroupArea } from "./form-group-area";
 import { FormGroupDate } from "./form-group-date";
 import { FormGroupDropdown } from "./form-group-dropdown";
@@ -186,6 +186,7 @@ export default function LostItemForm() {
         placeholder="Select category..."
         control={control}
         errors={errors}
+        isNullable={false}
         options={categories.map((cat) => ({
           label: cat.name,
           value: cat.id,

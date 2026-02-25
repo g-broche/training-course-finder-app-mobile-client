@@ -4,9 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useQuery } from "@tanstack/react-query";
 import AnnounceData from "../../../../src/components/announces/announce-data";
-import NavigationButton from "../../../../src/components/buttons/navigation-button";
 import ChatMenu from "../../../../src/components/discussions/discussion-menu";
-import ErrorText from "../../../../src/components/error-text";
+import NavigationButton from "../../../../src/components/shared/buttons/navigation-button";
+import ErrorText from "../../../../src/components/shared/error-text";
 import { getAnnounceDetails } from "../../../../src/services/announceService";
 import { containerStyles } from "../../../../src/styles/containerStyles";
 
@@ -26,7 +26,7 @@ export default function AnnounceDetails() {
         <View style={containerStyles.main}>
           <NavigationButton
             title="Back to Lost Items"
-            pathname="announces/lost"
+            pathname="/announces/lost"
           />
           {isLoading && <ActivityIndicator />}
           {isError && <ErrorText error={error} />}

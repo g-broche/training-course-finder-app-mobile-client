@@ -9,6 +9,7 @@ const ENDPOINTS = {
   login: "/api/auth/signin",
   logout: "/api/auth/signoff",
   refresh: "/api/auth/refresh",
+  displayNameAvailability: "/api/users/displayName/available",
 };
 
 export const registerUser = async (
@@ -67,5 +68,33 @@ export const getUserFromToken = (token: string): LoggedUser | null => {
   } catch (error) {
     console.error("Failed to decode token:", error);
     return null;
+  }
+};
+
+/**
+ * Check if a display name is available
+ * @param displayName - The display name to check
+ * @returns Promise<boolean> - true if available, false if taken
+ */
+export const checkDisplayNameAvailability = async (
+  displayName: string,
+): Promise<boolean> => {
+  try {
+    const response = await request(
+      ENDPOINTS.displayNameAvailability,
+      {
+        method: "GET",
+      },
+      { displayName },
+    );
+
+    if (response.success && response.data !== undefined) {
+      return response.data as boolean;
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Failed to check display name availability:", error);
+    return false;
   }
 };
