@@ -1,6 +1,5 @@
 import Constants from "expo-constants";
 import { ApiResponse } from "../types/api-interface";
-import { UploadParams } from "../types/app";
 import { isApiResponse } from "../utils/typeGuard";
 
 const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
@@ -12,11 +11,16 @@ let tokenGetter:
 let tokenSetter:
   | ((accessToken: string, refreshToken: string) => Promise<void>)
   | null = null;
-let isRefreshing = false;
+// Forced logout on failed refresh
+let authRefreshFailureHandler: (() => Promise<void> | void) | null = null;
+// Queue to hold failed requests during token refresh
 let failedQueue: {
   resolve: (token: string) => void;
   reject: (error: any) => void;
 }[] = [];
+// Flags to prevent multiple simultaneous refresh attempts
+let isHandlingAuthRefreshFailure = false;
+let isRefreshing = false;
 
 // Function to set token handlers, called from AuthContext
 export const setTokenHandlers = (
@@ -25,6 +29,12 @@ export const setTokenHandlers = (
 ) => {
   tokenGetter = getter;
   tokenSetter = setter;
+};
+// get the Forced logout logic from AuthContext for handling refresh failure
+export const setAuthRefreshFailureHandler = (
+  handler: (() => Promise<void> | void) | null,
+) => {
+  authRefreshFailureHandler = handler;
 };
 
 // Helper to process the queue of failed requests after token refresh attempt
@@ -37,6 +47,19 @@ const processQueue = (error: any, token: string | null = null) => {
     }
   });
   failedQueue = [];
+};
+
+// Handle actions on refresh failure, ensuring only one handler runs at a time
+const handleAuthRefreshFailure = async () => {
+  if (!authRefreshFailureHandler || isHandlingAuthRefreshFailure) {
+    return;
+  }
+  isHandlingAuthRefreshFailure = true;
+  try {
+    await authRefreshFailureHandler();
+  } finally {
+    isHandlingAuthRefreshFailure = false;
+  }
 };
 
 export const buildUrl = (
@@ -56,6 +79,7 @@ export const request = async (
   endpoint: string,
   options?: RequestInit,
   params?: Record<string, string | number>,
+  isMultipart: boolean = false,
 ): Promise<ApiResponse> => {
   const builtApiRequest = buildUrl(endpoint, params);
 
@@ -65,14 +89,15 @@ export const request = async (
     : { accessToken: null, refreshToken: null };
   const { accessToken } = tokens;
 
-  // Build headers with access token if available
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    ...(options?.headers || {}),
-  };
+  // Build headers with access token if available and let fetch set
+  // Content-Type if multipart is true for correct boundary handling
+  const headers = new Headers(options?.headers);
+  if (!isMultipart && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
 
   if (accessToken) {
-    headers["Authorization"] = `Bearer ${accessToken}`;
+    headers.set("Authorization", `Bearer ${accessToken}`);
   }
 
   options = {
@@ -93,10 +118,8 @@ export const request = async (
         })
           .then((newAccessToken) => {
             // Retry the request with new token
-            const retryHeaders = {
-              ...headers,
-              Authorization: `Bearer ${newAccessToken}`,
-            };
+            const retryHeaders = new Headers(headers);
+            retryHeaders.set("Authorization", `Bearer ${newAccessToken}`);
             return fetch(builtApiRequest, {
               ...options,
               headers: retryHeaders,
@@ -121,14 +144,12 @@ export const request = async (
 
       // Start refresh process
       isRefreshing = true;
-
       try {
         const refreshResponse = await fetch(buildUrl("/api/auth/refresh"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ refreshToken: tokens.refreshToken }),
         });
-
         const refreshData = await refreshResponse.json().catch(() => null);
         if (
           refreshResponse.ok &&
@@ -139,16 +160,12 @@ export const request = async (
           const newAccessToken = refreshData.data.accessToken;
           const newRefreshToken = refreshData.data.refreshToken;
 
-          // Update tokens
+          // Update tokens and process the queue of failed requests
           await tokenSetter(newAccessToken, newRefreshToken);
           processQueue(null, newAccessToken);
-
           // Retry original request with new token
-          const retryHeaders = {
-            ...headers,
-            Authorization: `Bearer ${newAccessToken}`,
-          };
-
+          const retryHeaders = new Headers(headers);
+          retryHeaders.set("Authorization", `Bearer ${newAccessToken}`);
           const retryRes = await fetch(builtApiRequest, {
             ...options,
             headers: retryHeaders,
@@ -158,20 +175,21 @@ export const request = async (
             if (retryData && isApiResponse(retryData)) return retryData;
             throw new Error(`Request failed with status ${retryRes.status}`);
           }
-
           return retryData as ApiResponse;
         } else {
           processQueue(new Error("Token refresh failed"), null);
+          await handleAuthRefreshFailure();
           return {
             success: false,
-            message: "Session expired. Please login again.",
+            message: "Failed to refresh session. Please login again.",
           } as ApiResponse;
         }
       } catch (refreshError: any) {
         processQueue(refreshError, null);
+        await handleAuthRefreshFailure();
         return {
           success: false,
-          message: "Session expired. Please login again.",
+          message: "Failed to refresh session. Please login again.",
         } as ApiResponse;
       } finally {
         isRefreshing = false;
@@ -195,116 +213,3 @@ export const request = async (
     } as ApiResponse;
   }
 };
-
-export async function uploadMultipart({
-  url,
-  image,
-  fields,
-  token,
-  fieldName = "image",
-}: UploadParams): Promise<ApiResponse> {
-  try {
-    // Get the current access token if not provided
-    const authToken = token || (tokenGetter ? tokenGetter().accessToken : null);
-
-    const formData = new FormData();
-
-    // Add the image file if present
-    if (image) {
-      const imageFile: any = {
-        uri: image.uri,
-        type: image.type || "image/jpeg",
-        name: "image.jpg",
-      };
-      formData.append(fieldName, imageFile);
-    }
-
-    // Add all other fields
-    Object.entries(fields).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
-    const headers: HeadersInit = {};
-    if (authToken) {
-      headers["Authorization"] = `Bearer ${authToken}`;
-    }
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: formData,
-    });
-
-    const data = await response.json().catch(() => null);
-
-    // Handle 401 Unauthorized - attempt token refresh
-    if (response.status === 401 && tokenGetter && tokenSetter) {
-      const tokens = tokenGetter();
-
-      if (tokens.refreshToken) {
-        try {
-          const refreshResponse = await fetch(buildUrl("/api/auth/refresh"), {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken: tokens.refreshToken }),
-          });
-
-          const refreshData = await refreshResponse.json().catch(() => null);
-
-          if (
-            refreshResponse.ok &&
-            refreshData?.success &&
-            refreshData.data?.accessToken &&
-            refreshData.data?.refreshToken
-          ) {
-            const newAccessToken = refreshData.data.accessToken;
-            const newRefreshToken = refreshData.data.refreshToken;
-
-            // Update tokens
-            await tokenSetter(newAccessToken, newRefreshToken);
-
-            // Retry upload with new token
-            const retryHeaders: HeadersInit = {
-              Authorization: `Bearer ${newAccessToken}`,
-            };
-
-            const retryResponse = await fetch(url, {
-              method: "POST",
-              headers: retryHeaders,
-              body: formData,
-            });
-
-            const retryData = await retryResponse.json().catch(() => null);
-
-            if (!retryResponse.ok) {
-              if (retryData && isApiResponse(retryData)) return retryData;
-              throw new Error(
-                `Upload failed with status ${retryResponse.status}`,
-              );
-            }
-
-            return retryData as ApiResponse;
-          }
-        } catch {
-          return {
-            success: false,
-            message: "Session expired. Please login again.",
-          } as ApiResponse;
-        }
-      }
-    }
-
-    if (!response.ok) {
-      if (data && isApiResponse(data)) return data;
-      throw new Error(`Upload failed with status ${response.status}`);
-    }
-
-    return data as ApiResponse;
-  } catch (error: any) {
-    console.error("Upload error:", error);
-    return {
-      success: false,
-      message: error.message || "Unknown error occurred during upload",
-    } as ApiResponse;
-  }
-}

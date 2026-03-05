@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useAuth } from "../../context/AuthContext";
 import { queryClient } from "../../core/queryClient";
 import { createNewDiscussion } from "../../services/discussionService";
 import { NewMessageRequest } from "../../types/request";
@@ -9,14 +8,12 @@ interface useStartDiscussionProps {
 }
 
 export const useStartDiscussion = ({ announceId }: useStartDiscussionProps) => {
-  const { authState } = useAuth();
-  const userToken = authState?.accessToken || "";
-
   return useMutation({
     mutationFn: (payload: NewMessageRequest) =>
-      createNewDiscussion(announceId, payload, userToken),
+      createNewDiscussion(announceId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["discussions"] });
+      queryClient.invalidateQueries({ queryKey: ["discussions", announceId] });
     },
   });
 };

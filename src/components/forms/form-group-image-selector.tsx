@@ -1,13 +1,13 @@
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import {
-    Control,
-    Controller,
-    FieldErrors,
-    Path,
-    PathValue,
+  Control,
+  Controller,
+  FieldErrors,
+  Path,
+  PathValue,
 } from "react-hook-form";
-import { Image, Text, View } from "react-native";
+import { Alert, Image, Text, View } from "react-native";
 import { formStyles } from "../../styles/formStyles";
 import { mediaStyles } from "../../styles/mediaStyles";
 import ActionButton from "../shared/buttons/action-button";
@@ -30,8 +30,23 @@ export function FormGroupImageSelector<T, K extends Path<T> = Path<T>>({
   const error = errors[name as keyof typeof errors];
 
   const pickImage = async (onChange: (file: File) => void) => {
+    const currentPermission =
+      await ImagePicker.getMediaLibraryPermissionsAsync();
+
+    const permission = currentPermission.granted
+      ? currentPermission
+      : await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert(
+        "Permission required",
+        "Permission to access your media library is required to select an image."
+      );
+      return;
+    }
+
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       quality: 0.7,
     });

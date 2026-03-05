@@ -6,7 +6,7 @@ import {
   LostItemRequest,
   SearchAnnounceFilter,
 } from "../types/request";
-import { buildUrl, request, uploadMultipart } from "./base-api-service";
+import { request } from "./base-api-service";
 
 const AMOUNT_PER_PAGE = Constants.expoConfig?.extra?.AMOUNT_PER_PAGE || 10;
 
@@ -51,32 +51,40 @@ export const formatFilterFromForm = (
  * sends request to the API to create a new announce for found item based on data submitted
  * @param data form data
  * @param image Image associated with the found item
- * @param userToken token of active user
  * @returns Created Announce
  */
 export const createNewFoundAnnounce = async (
   data: FoundItemRequest,
   image: Image,
-  userToken: string,
 ): Promise<Announce> => {
-  const fields = {
-    title: data.title,
-    description: data.description,
-    latitude: String(data.latitude),
-    longitude: String(data.longitude),
-    city: data.city,
-    country: data.country,
-    relevantDate: data.relevantDate.toISOString().split("T")[0],
-    categoryId: String(data.categoryId),
-  };
-
-  const response = await uploadMultipart({
-    url: buildUrl(ENDPOINTS.newFoundAnnounce),
-    image: image,
-    fields: fields,
-    token: userToken,
-    fieldName: "image",
-  });
+  const formData = new FormData();
+  formData.append("title", data.title);
+  formData.append("description", data.description);
+  formData.append("latitude", String(data.latitude));
+  formData.append("longitude", String(data.longitude));
+  formData.append("city", data.city);
+  formData.append("country", data.country);
+  formData.append(
+    "relevantDate",
+    data.relevantDate.toISOString().split("T")[0],
+  );
+  formData.append("categoryId", String(data.categoryId));
+  formData.append("image", {
+    uri: image.uri,
+    type: image.type || "image/jpeg",
+    name: image.name || "image.jpg",
+  } as any);
+  const getParams = undefined;
+  const isMultipart = true;
+  const response = await request(
+    ENDPOINTS.newFoundAnnounce,
+    {
+      method: "POST",
+      body: formData,
+    },
+    getParams,
+    isMultipart,
+  );
 
   if (!response.success) {
     throw new Error(response.message || "Failed to create found announce");
@@ -134,32 +142,44 @@ export const getAnnounceDetails = async (id: string) => {
  * sends request to the API to create a new announce for lost item based on data submitted
  * @param data form data
  * @param image Image associated with the lost item (optional)
- * @param userToken token of active user
  * @returns Created Announce
  */
 export const createNewLostAnnounce = async (
   data: LostItemRequest,
   image: Image | null,
-  userToken: string,
 ): Promise<Announce> => {
-  const fields: Record<string, string> = {
-    title: data.title,
-    description: data.description,
-    latitude: String(data.latitude),
-    longitude: String(data.longitude),
-    city: data.city,
-    country: data.country,
-    relevantDate: data.relevantDate.toISOString().split("T")[0],
-    categoryId: String(data.categoryId),
-  };
+  const formData = new FormData();
+  formData.append("title", data.title);
+  formData.append("description", data.description);
+  formData.append("latitude", String(data.latitude));
+  formData.append("longitude", String(data.longitude));
+  formData.append("city", data.city);
+  formData.append("country", data.country);
+  formData.append(
+    "relevantDate",
+    data.relevantDate.toISOString().split("T")[0],
+  );
+  formData.append("categoryId", String(data.categoryId));
 
-  const response = await uploadMultipart({
-    url: buildUrl(ENDPOINTS.newLostAnnounce),
-    image: image,
-    fields: fields,
-    token: userToken,
-    fieldName: "image",
-  });
+  if (image) {
+    formData.append("image", {
+      uri: image.uri,
+      type: image.type || "image/jpeg",
+      name: image.name || "image.jpg",
+    } as any);
+  }
+
+  const getParams = undefined;
+  const isMultipart = true;
+  const response = await request(
+    ENDPOINTS.newLostAnnounce,
+    {
+      method: "POST",
+      body: formData,
+    },
+    getParams,
+    isMultipart,
+  );
 
   if (!response.success) {
     throw new Error(response.message || "Failed to create lost announce");
@@ -202,12 +222,11 @@ export const getPaginatedLostAnnounce = async (
 /**
  * get page of user's announces
  * @param page page requested
- * @param userToken token of active user
+ * @param size number of items per page (optional, defaults to AMOUNT_PER_PAGE)
  * @returns Api response containing the results
  */
 export const getPaginatedUserAnnounces = async (
   page: number,
-  userToken: string,
   size?: number,
 ) => {
   page = Number.isInteger(page) && page >= 0 ? page : 0;
@@ -219,12 +238,7 @@ export const getPaginatedUserAnnounces = async (
   };
   const response = await request(
     ENDPOINTS.listUserAnnounces,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${userToken}`,
-      },
-    },
+    { method: "GET" },
     params,
   );
   if (!response.success) {
@@ -237,19 +251,16 @@ export const getPaginatedUserAnnounces = async (
  * Update the status of an announce
  * @param announceId UUID of the announce
  * @param announceStatus New status ("solved" | "unsolved")
- * @param userToken token of active user
  * @returns Api response
  */
 export const updateAnnounceStatus = async (
   announceId: string,
   announceStatus: "solved" | "unsolved",
-  userToken: string,
 ) => {
   const requestUri = `/api/announces/${announceId}/update/status`;
   const response = await request(requestUri, {
     method: "PATCH",
     headers: {
-      Authorization: `Bearer ${userToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ announceStatus }),
@@ -264,19 +275,16 @@ export const updateAnnounceStatus = async (
  * Update the interactivity state of an announce
  * @param announceId UUID of the announce
  * @param interactivityState New state ("open" | "close")
- * @param userToken token of active user
  * @returns Api response
  */
 export const updateAnnounceInteractivity = async (
   announceId: string,
   interactivityState: "open" | "close",
-  userToken: string,
 ) => {
   const requestUri = `/api/announces/${announceId}/update/interactivity`;
   const response = await request(requestUri, {
     method: "PATCH",
     headers: {
-      Authorization: `Bearer ${userToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ interactivityState }),

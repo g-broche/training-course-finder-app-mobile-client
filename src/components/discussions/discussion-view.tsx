@@ -1,6 +1,6 @@
-import { Text, View, ViewStyle } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../context/AuthContext";
-import { useDiscussion } from "../../hooks/discussion/useDiscussions";
+import { useDiscussion } from "../../hooks/discussion/useDiscussion";
 import { COLOR_STYLES } from "../../styles/constants/colors";
 import { DIMENSIONS } from "../../styles/constants/dimensions";
 import { textStyles } from "../../styles/textStyles";
@@ -21,27 +21,23 @@ export function DiscussionView({
   announceAuthorDisplayName,
   isAnnounceInteractivityOpen = false,
 }: DiscussionViewProps) {
+  // Getting authentification state from AuthContext
   const { authState } = useAuth();
+  // Getting detailed discussion data using the discussionId
   const {
     data: detailedDiscussion,
     isLoading,
     isError,
-  } = useDiscussion({ announceId: discussionId });
+  } = useDiscussion({ discussionId: discussionId });
+  // Function to check if a given message is from the current user
   const isMessageFromUser = (authorDisplayName: string) => {
     return authState?.user?.displayName === authorDisplayName;
   };
+  // Check if the announce is from the current user
   const isAnnounceFromUser =
     authState?.user?.displayName === announceAuthorDisplayName;
-  const messageStyle = (isFromUser: boolean): ViewStyle => {
-    return {
-      backgroundColor: isFromUser
-        ? COLOR_STYLES.defaultTheme.colorInteractiveActive
-        : COLOR_STYLES.defaultTheme.colorInteractiveInactive,
-      alignSelf: isFromUser ? "flex-end" : "flex-start",
-      width: "80%",
-    };
-  };
 
+  // Checks if the discussion is open for interaction
   const doesAllowReply =
     isAnnounceInteractivityOpen &&
     detailedDiscussion?.interactivityStateName === "open";
@@ -49,9 +45,12 @@ export function DiscussionView({
   if (isLoading) {
     return <LoaderState />;
   }
+
   if (isError) {
     return <ErrorState />;
   }
+
+  // Main render of the discussion view, showing messages and a form to reply if allowed
   if (!isLoading && !!detailedDiscussion) {
     return (
       <View style={styles.container}>
@@ -67,17 +66,21 @@ export function DiscussionView({
           </Text>
         </View>
         <View style={styles.messageContainer}>
+          {/* Displaying messages of the discussion, styling them differently if they are from the user or not */}
           {detailedDiscussion.messages.map((message) => (
             <MessageCard
               key={message.index}
               message={message}
               isFromUser={isMessageFromUser(message.author.displayName)}
-              style={messageStyle(
-                isMessageFromUser(message.author.displayName),
-              )}
+              style={
+                isMessageFromUser(message.author.displayName)
+                  ? styles.messageFromUser
+                  : styles.messageFromOther
+              }
             />
           ))}
         </View>
+        {/* Displaying the message form if the discussion allows replies, otherwise showing a closed message */}
         {doesAllowReply ? (
           <MessageForm
             announceId={detailedDiscussion.announceId}
@@ -92,7 +95,7 @@ export function DiscussionView({
   }
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     padding: DIMENSIONS.spacings.gaps.s,
     gap: DIMENSIONS.spacings.gaps.l,
@@ -103,4 +106,14 @@ const styles = {
   messageContainer: {
     gap: DIMENSIONS.spacings.gaps.m,
   },
-};
+  messageFromUser: {
+    backgroundColor: COLOR_STYLES.defaultTheme.colorInteractiveActive,
+    alignSelf: "flex-end",
+    width: "80%",
+  },
+  messageFromOther: {
+    backgroundColor: COLOR_STYLES.defaultTheme.colorInteractiveInactive,
+    alignSelf: "flex-start",
+    width: "80%",
+  },
+});

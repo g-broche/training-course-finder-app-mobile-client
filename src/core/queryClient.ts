@@ -37,4 +37,12 @@ export const invalidateAllQueries = () => {
   return queryClient.invalidateQueries();
 };
 
+/**
+ * Function to clear all cached query and mutation state
+ */
+export const clearAllQueries = async () => {
+  await queryClient.cancelQueries();
+  queryClient.clear();
+};
+
 export default queryClient;

@@ -10,11 +10,11 @@ export const useAnnounceDiscussions = ({
   announceId,
 }: UseAnnounceDiscussionsProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.accessToken || null;
-  const isEnabled = !!announceId && !!userToken;
+  const hasAccessToken = !!authState?.accessToken;
+  const isEnabled = !!announceId && hasAccessToken;
   return useQuery({
     queryKey: ["discussions", announceId],
-    queryFn: () => getAllAnnounceDiscussions(announceId, userToken),
+    queryFn: () => getAllAnnounceDiscussions(announceId),
     enabled: isEnabled,
   });
 };

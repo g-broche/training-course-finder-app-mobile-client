@@ -3,14 +3,17 @@ import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { invalidateAllQueries } from "../core/queryClient";
+import { clearAllQueries } from "../core/queryClient";
 import {
   getUserFromToken,
   loginUser,
   logoutUser,
   registerUser,
 } from "../services/authService";
-import { setTokenHandlers } from "../services/base-api-service";
+import {
+  setAuthRefreshFailureHandler,
+  setTokenHandlers,
+} from "../services/base-api-service";
 import { LoggedUser } from "../types/dto";
 import { Credentials, SignUpData } from "../types/request";
 
@@ -67,6 +70,26 @@ export const AuthProvider = ({ children }: any) => {
       updateTokens,
     );
   }, [authState.accessToken, authState.refreshToken]);
+
+  const forceLogout = async () => {
+    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+    delete axios.defaults.headers.common["Authorization"];
+    setAuthState({
+      accessToken: null,
+      refreshToken: null,
+      authenticated: false,
+      user: null,
+    });
+    router.replace("/");
+    await clearAllQueries();
+  };
+
+  // Register callback used by base-api-service when refresh fails.
+  useEffect(() => {
+    setAuthRefreshFailureHandler(forceLogout);
+    return () => setAuthRefreshFailureHandler(null);
+  }, []);
 
   useEffect(() => {
     const loadTokens = async () => {
@@ -165,17 +188,11 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const logout = async () => {
-    await logoutUser(authState?.refreshToken || "");
-    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
-    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
-    setAuthState({
-      accessToken: null,
-      refreshToken: null,
-      authenticated: false,
-      user: null,
-    });
-    router.replace("/");
-    invalidateAllQueries();
+    try {
+      await logoutUser(authState?.refreshToken || "");
+    } finally {
+      await forceLogout();
+    }
   };
 
   const value = {
