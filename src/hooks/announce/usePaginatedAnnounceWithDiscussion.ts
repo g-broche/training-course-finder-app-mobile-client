@@ -1,23 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
-import { getPaginatedUserAnnounces } from "../../services/announceService";
+import { getPaginatedAnnounceWithDiscussions } from "../../services/announceService";
 
-interface UsePaginatedUserAnnouncesProps {
+interface UsePaginatedAnnounceWithDiscussionProps {
   currentPage: number;
   size?: number;
 }
 
-export const usePaginatedUserAnnounces = ({
+export const usePaginatedAnnounceWithDiscussion = ({
   currentPage,
   size,
-}: UsePaginatedUserAnnouncesProps) => {
+}: UsePaginatedAnnounceWithDiscussionProps) => {
   const { authState } = useAuth();
   const userId = authState?.user?.uuid;
   const isEnabled = !!authState?.accessToken && !!userId;
 
   return useQuery({
-    queryKey: ["announces", "user-announces", userId, currentPage, size],
-    queryFn: () => getPaginatedUserAnnounces(currentPage, size),
+    queryKey: ["announces", "with-discussions", userId, currentPage, size],
+    queryFn: () => getPaginatedAnnounceWithDiscussions(currentPage, size),
     staleTime: 0,
     gcTime: 0,
     refetchOnMount: "always",

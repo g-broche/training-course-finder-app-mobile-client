@@ -10,8 +10,10 @@ export default function CustomDrawerContent(props: any) {
 
   const drawerItems: { label: string; route: Href }[] = [
     { label: "Home", route: "/" },
-    { label: "Found", route: "/announces/found" },
-    { label: "Lost", route: "/announces/lost" },
+    { label: "Found", route: "/(tabs)/announces/found" },
+    { label: "Lost", route: "/(tabs)/announces/lost" },
+    { label: "My announces", route: "/(tabs)/my-announces" },
+    { label: "My discussions", route: "/(tabs)/my-discussions/index" },
   ];
 
   return (

@@ -30,8 +30,12 @@ export function DiscussionCard({
         <Text style={textStyles.inverse}>
           Started: {formatDate(discussion.createdAt)}
         </Text>
-        <Text style={[textStyles.inverse, styles.quote]}>
-          &quot;{discussion.excerpt}&quot;
+        <Text
+          style={[textStyles.inverse, styles.quote]}
+          numberOfLines={3}
+          ellipsizeMode="tail"
+        >
+          {discussion.excerpt}
         </Text>
       </TouchableOpacity>
     </View>
@@ -46,6 +50,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   quote: {
+    marginTop: DIMENSIONS.spacings.gaps.s,
     fontStyle: "italic",
   },
 });

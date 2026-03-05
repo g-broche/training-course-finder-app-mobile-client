@@ -2,9 +2,9 @@ import Constants from "expo-constants";
 import { Image } from "../types/app";
 import { Announce } from "../types/dto";
 import {
-  FoundItemRequest,
-  LostItemRequest,
-  SearchAnnounceFilter,
+    FoundItemRequest,
+    LostItemRequest,
+    SearchAnnounceFilter,
 } from "../types/request";
 import { request } from "./base-api-service";
 
@@ -17,6 +17,7 @@ const ENDPOINTS = {
   listLostAnnounce: "/api/announces/paginated?type=lost",
   newLostAnnounce: "/api/announces/lost/new",
   listUserAnnounces: "/api/announces/my-announces",
+  listAnnouncesWithDiscussions: "/api/announces/with-discussions",
 };
 
 /**
@@ -243,6 +244,37 @@ export const getPaginatedUserAnnounces = async (
   );
   if (!response.success) {
     throw new Error(response.message || "Failed to retrieve user announces");
+  }
+  return await response.data;
+};
+
+/**
+ * get page of announces where current user has discussions
+ * @param page page requested
+ * @param size number of items per page (optional, defaults to AMOUNT_PER_PAGE)
+ * @returns Api response containing the results
+ */
+export const getPaginatedAnnounceWithDiscussions = async (
+  page: number,
+  size?: number,
+) => {
+  page = Number.isInteger(page) && page >= 0 ? page : 0;
+  const pageSize =
+    size && Number.isInteger(size) && size > 0 ? size : AMOUNT_PER_PAGE;
+  const params: Record<string, string | number> = {
+    page,
+    size: pageSize,
+  };
+  const response = await request(
+    ENDPOINTS.listAnnouncesWithDiscussions,
+    { method: "GET" },
+    params,
+  );
+  if (!response.success) {
+    throw new Error(
+      response.message ||
+        "Failed to retrieve announces with discussions for current user",
+    );
   }
   return await response.data;
 };

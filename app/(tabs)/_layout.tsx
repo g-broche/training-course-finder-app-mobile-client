@@ -69,6 +69,24 @@ export default function TabsLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="my-announces/index"
+          options={{
+            title: "History",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="albums" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="my-discussions/index"
+          options={{
+            title: "Discussions",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="chatbubbles" size={size} color={color} />
+            ),
+          }}
+        />
       </Tabs>
 
       <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
