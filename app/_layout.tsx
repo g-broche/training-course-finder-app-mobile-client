@@ -1,7 +1,7 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import * as NavigationBar from "expo-navigation-bar";
 import { Slot } from "expo-router";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -36,23 +36,35 @@ export default function RootLayout() {
           </View>
         </SafeAreaProvider>
       </GestureHandlerRootView>
-      // <SafeAreaProvider>
-      //     <View style={{ flex: 1, backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary }}>
-      //         <StatusBar style="light" />
-      //         <Drawer
-      //             screenOptions={{
-      //                 headerShown: false,
-      //                 drawerStyle: {
-      //                     width: DIMENSIONS.sizes.drawer.width,
-      //                     backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
-      //                 },
-      //             }}
-      //             drawerContent={(props) => <CustomDrawerContent {...props} />}
-      //         >
-      //             <Slot />
-      //         </Drawer>
-      //     </View>
-      // </SafeAreaProvider >
+    );
+  };
+
+  const ContentWithDrawer = () => {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          {/* <View
+            style={{
+              flex: 1,
+              backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
+            }}
+          >
+            <StatusBar style="light" />
+            <Drawer
+              screenOptions={{
+                headerShown: false,
+                drawerStyle: {
+                  width: DIMENSIONS.sizes.drawer.width,
+                  backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
+                },
+              }}
+              drawerContent={(props) => <CustomDrawerContent {...props} />}
+            >
+              <Slot />
+            </Drawer>
+          </View> */}
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     );
   };
 
