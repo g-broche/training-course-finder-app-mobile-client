@@ -206,7 +206,6 @@ export const request = async (
     return data as ApiResponse;
   } catch (error: any) {
     // For unexpected errors unrelated to strictly API create API response to be handled by the caller
-    console.error(error);
     return {
       success: false,
       message: error.message || "Unknown error occurred",

@@ -53,13 +53,11 @@ export default function AnnounceFilterForm({
       const categories = await getAllCategories();
       setCategories(categories);
     } catch (err) {
-      console.log(err);
       Alert.alert("Error", "Failed to load categories");
     }
   };
 
   const onSubmit = async (data: SearchAnnounceFilter) => {
-    console.log("filters on click", data);
     const filter = formatFilterFromForm(data);
     onFilterSubmit(filter);
   };

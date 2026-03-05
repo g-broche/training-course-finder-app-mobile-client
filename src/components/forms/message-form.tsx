@@ -90,7 +90,6 @@ export default function MessageForm({
             onSuccess?.();
           },
           onError: (error) => {
-            console.error("Message submission error:", error);
             Alert.alert("Error", "Failed to send message.");
           },
         });
@@ -101,13 +100,11 @@ export default function MessageForm({
             onSuccess?.();
           },
           onError: (error) => {
-            console.error("Message submission error:", error);
             Alert.alert("Error", "Failed to send message.");
           },
         });
       }
     } catch (err) {
-      console.error("Message submission error:", err);
       Alert.alert("Error", "Failed to send message.");
     }
   };

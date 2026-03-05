@@ -33,7 +33,6 @@ export default function Paginator({
   // wrapper function to handle the change of page taking into account that pages are indexed at 1 on
   // the display but all the logic is indexed at 0 based on array conventions
   const handlePageChangeRequest = (requestedPage: number) => {
-    console.log("pressed button with requested page: " + requestedPage);
     if (requestedPage < 1 || requestedPage > totalPages) {
       setSelectedPage(currentPage + 1);
       return;

@@ -149,7 +149,6 @@ export const AuthProvider = ({ children }: any) => {
         user: loggedUser,
       });
     } catch (error) {
-      console.error(error);
       Alert.alert("Sign up error", "Unknown error occured during sign up");
     }
   };

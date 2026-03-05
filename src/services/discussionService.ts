@@ -72,7 +72,6 @@ export const addMessage = async (
   message: NewMessageRequest,
 ): Promise<DetailedDiscussion> => {
   const requestUrl = ENDPOINTS.addMessage(discussionId);
-  console.log("endpoint", requestUrl);
 
   const response = await request(requestUrl, {
     method: "POST",

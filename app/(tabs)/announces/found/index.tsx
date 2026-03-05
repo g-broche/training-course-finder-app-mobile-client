@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AnnounceGrid from "../../../../src/components/announces/announce-grid";
@@ -17,9 +17,7 @@ export default function FoundIndex() {
     currentPage,
     filter,
   });
-  useEffect(() => {
-    console.log("announces: ", data);
-  }, [data]);
+
   const updateSearch = (filter: SearchAnnounceFilter) => {
     setCurrentPage(0);
     setFilter(filter);
