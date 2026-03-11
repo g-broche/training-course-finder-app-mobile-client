@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AnnounceGrid from "../../../../src/components/announces/announce-grid";
-import NavigationButton from "../../../../src/components/buttons/navigation-button";
 import AnnounceFilterForm from "../../../../src/components/forms/announce-filter-form";
-import Paginator from "../../../../src/components/paginator";
-import ViewTitle from "../../../../src/components/view-title";
+import NavigationButton from "../../../../src/components/shared/buttons/navigation-button";
+import Paginator from "../../../../src/components/shared/paginator";
+import ViewTitle from "../../../../src/components/shared/view-title";
 import { usePaginatedLost } from "../../../../src/hooks/announce/usePaginatedLost";
 import { containerStyles } from "../../../../src/styles/containerStyles";
 import { SearchAnnounceFilter } from "../../../../src/types/request";
@@ -17,9 +17,7 @@ export default function LostIndex() {
     currentPage,
     filter,
   });
-  useEffect(() => {
-    console.log("announces: ", data);
-  }, [data]);
+
   const updateSearch = (filter: SearchAnnounceFilter) => {
     setCurrentPage(0);
     setFilter(filter);
@@ -31,7 +29,7 @@ export default function LostIndex() {
           <ViewTitle title="Lost items" />
           <NavigationButton
             title="Report lost item"
-            pathname="announces/lost/submit"
+            pathname="/announces/lost/submit"
           ></NavigationButton>
           <AnnounceFilterForm
             onFilterSubmit={(filter) => updateSearch(filter)}

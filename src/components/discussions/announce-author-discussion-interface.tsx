@@ -9,7 +9,7 @@ import {
 import queryClient from "../../core/queryClient";
 import { containerStyles } from "../../styles/containerStyles";
 import { Discussion } from "../../types/dto";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
 import { DiscussionCard } from "./discussion-card";
 import { DiscussionView } from "./discussion-view";
 

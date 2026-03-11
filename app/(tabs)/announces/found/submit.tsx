@@ -1,7 +1,7 @@
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FoundItemForm from "../../../../src/components/forms/found-item-form";
-import ViewTitle from "../../../../src/components/view-title";
+import ViewTitle from "../../../../src/components/shared/view-title";
 import { containerStyles } from "../../../../src/styles/containerStyles";
 
 export default function SubmitFound() {

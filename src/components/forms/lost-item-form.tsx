@@ -11,7 +11,7 @@ import { useCreateLostAnnounce } from "../../hooks/announce/useCreateLostAnnounc
 import { getAllCategories } from "../../services/categoryService";
 import { formStyles } from "../../styles/formStyles";
 import { LostItemRequest } from "../../types/request";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
 import { FormGroupArea } from "./form-group-area";
 import { FormGroupDate } from "./form-group-date";
 import { FormGroupDropdown } from "./form-group-dropdown";
@@ -83,7 +83,6 @@ export default function LostItemForm() {
       const categories = await getAllCategories();
       setCategories(categories);
     } catch (err) {
-      console.log(err);
       Alert.alert("Error", "Failed to load categories");
     }
   };
@@ -107,7 +106,7 @@ export default function LostItemForm() {
         setValue("country", place.country || "");
       }
     } catch (err) {
-      console.log("Reverse geocode error:", err);
+      console.error("Reverse geocode error:", err);
     }
   };
 
@@ -130,14 +129,10 @@ export default function LostItemForm() {
       { data, image },
       {
         onSuccess: (result) => {
-          console.log(result);
           Alert.alert("Success", "Lost item announce created successfully!");
           router.push("/announces/lost");
         },
         onError: (err: any) => {
-          console.log("Full error:", err);
-          console.log("Error response:", err.response?.data);
-          console.log("Error status:", err.response?.status);
           Alert.alert("Error", "Submission failed.");
         },
       },
@@ -186,6 +181,7 @@ export default function LostItemForm() {
         placeholder="Select category..."
         control={control}
         errors={errors}
+        isNullable={false}
         options={categories.map((cat) => ({
           label: cat.name,
           value: cat.id,

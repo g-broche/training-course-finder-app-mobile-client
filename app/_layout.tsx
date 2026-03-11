@@ -1,13 +1,16 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import * as NavigationBar from "expo-navigation-bar";
-import { Slot } from "expo-router";
-import { useEffect } from "react";
+import { Drawer } from "expo-router/drawer";
+import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
 import { Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import CustomDrawerContent from "../src/components/custom-drawer-content";
 import { AuthProvider } from "../src/context/AuthContext";
 import { queryClient } from "../src/core/queryClient";
 import { COLOR_STYLES } from "../src/styles/constants/colors";
+import { DIMENSIONS } from "../src/styles/constants/dimensions";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -32,27 +35,25 @@ export default function RootLayout() {
               backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
             }}
           >
-            <Slot />
+            <StatusBar style="light" />
+            <Drawer
+              screenOptions={{
+                headerShown: false,
+                drawerStyle: {
+                  width: DIMENSIONS.sizes.drawer.width,
+                  backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
+                },
+                sceneStyle: {
+                  backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary,
+                },
+              }}
+              drawerContent={(props) => <CustomDrawerContent {...props} />}
+            >
+              <Drawer.Screen name="(tabs)" options={{ title: "Home" }} />
+            </Drawer>
           </View>
         </SafeAreaProvider>
       </GestureHandlerRootView>
-      // <SafeAreaProvider>
-      //     <View style={{ flex: 1, backgroundColor: COLOR_STYLES.defaultTheme.colorPrimary }}>
-      //         <StatusBar style="light" />
-      //         <Drawer
-      //             screenOptions={{
-      //                 headerShown: false,
-      //                 drawerStyle: {
-      //                     width: DIMENSIONS.sizes.drawer.width,
-      //                     backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
-      //                 },
-      //             }}
-      //             drawerContent={(props) => <CustomDrawerContent {...props} />}
-      //         >
-      //             <Slot />
-      //         </Drawer>
-      //     </View>
-      // </SafeAreaProvider >
     );
   };
 

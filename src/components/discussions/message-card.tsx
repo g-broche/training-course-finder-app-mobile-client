@@ -5,6 +5,7 @@ import { FONT_STYLES } from "../../styles/constants/fonts";
 import { textStyles } from "../../styles/textStyles";
 import { Message } from "../../types/dto";
 import { formatDate } from "../../utils/pipe";
+import { decodeHtmlEntities } from "../../utils/stringUtil";
 import { MenuMessageOtherUser } from "../shared/app-menu/menu-message-other-user";
 
 interface MessageCardProps {
@@ -28,7 +29,7 @@ export function MessageCard({ message, isFromUser, style }: MessageCardProps) {
 
         <Text style={styles.date}>{formatDate(message.createdAt)}</Text>
       </View>
-      <Text style={textStyles.inverse}>{message.content}</Text>
+      <Text style={textStyles.inverse}>{decodeHtmlEntities(message.content)}</Text>
     </View>
   );
 }

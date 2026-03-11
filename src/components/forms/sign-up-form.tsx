@@ -1,16 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import {
-    Alert,
-    Pressable,
-    Text,
-    View
-} from "react-native";
+import { Pressable, Text, View } from "react-native";
 import * as yup from "yup";
 import { useAuth } from "../../context/AuthContext";
+import { checkDisplayNameAvailability } from "../../services/authService";
 import { formStyles } from "../../styles/formStyles";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
+import { FormGroupDisplayName } from "./form-group-display-name";
 import { FormGroupInput } from "./form-group-input";
 
 type FormData = {
@@ -38,7 +35,16 @@ const schema = yup.object().shape({
     .string()
     .required("Display name is required")
     .min(1, "Display name must be at least 1 characters")
-    .max(30, "Display name cannot exceed 30 characters"),
+    .max(30, "Display name cannot exceed 30 characters")
+    .test(
+      "displayName-availability",
+      "This display name is already taken",
+      async (value) => {
+        if (!value || value.length === 0) return true;
+        const isAvailable = await checkDisplayNameAvailability(value);
+        return isAvailable;
+      },
+    ),
   email: yup
     .string()
     .email("Email must have a valid format")
@@ -62,8 +68,12 @@ export default function SignUpForm() {
     control,
     handleSubmit,
     formState: { errors },
+    watch,
+    trigger,
   } = useForm<FormData>({
     resolver: yupResolver(schema) as any,
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -75,13 +85,16 @@ export default function SignUpForm() {
     },
   });
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      await onRegister(data);
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Sign up error", error.message || "Unknown error");
+  const password = watch("password");
+
+  useEffect(() => {
+    if (errors.passwordConfirm) {
+      trigger("passwordConfirm");
     }
+  }, [password, errors.passwordConfirm, trigger]);
+
+  const onSubmit = async (data: FormData) => {
+    await onRegister(data);
   };
 
   return (
@@ -101,7 +114,7 @@ export default function SignUpForm() {
         control={control}
         errors={errors}
       />
-      <FormGroupInput
+      <FormGroupDisplayName
         name="displayName"
         label="Name displayed publicly"
         placeholder="Enter your display name"
@@ -141,30 +154,33 @@ export default function SignUpForm() {
           secureTextEntry: true,
         }}
       />
-
-      <Controller
-        name="hasAcceptedGdpr"
-        control={control}
-        render={({ field: { value, onChange } }) => (
-          <Pressable
-            onPress={() => onChange(!value)}
-            style={formStyles.checkboxContainer}
-          >
-            <View
-              style={[formStyles.checkbox, value && formStyles.checkboxChecked]}
-            />
-            <Text style={formStyles.checkboxLabel}>
-              I accept the GDPR terms
-            </Text>
-          </Pressable>
+      <View style={formStyles.formGroup}>
+        <Controller
+          name="hasAcceptedGdpr"
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <Pressable
+              onPress={() => onChange(!value)}
+              style={formStyles.checkboxContainer}
+            >
+              <View
+                style={[
+                  formStyles.checkbox,
+                  value && formStyles.checkboxChecked,
+                ]}
+              />
+              <Text style={formStyles.checkboxLabel}>
+                I accept the GDPR terms
+              </Text>
+            </Pressable>
+          )}
+        />
+        {errors.hasAcceptedGdpr && (
+          <Text style={formStyles.errorText}>
+            {errors.hasAcceptedGdpr.message}
+          </Text>
         )}
-      />
-      {errors.hasAcceptedGdpr && (
-        <Text style={formStyles.errorText}>
-          {errors.hasAcceptedGdpr.message}
-        </Text>
-      )}
-
+      </View>
       <ActionButton
         title="Confirm"
         callback={handleSubmit(onSubmit)}

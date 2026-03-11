@@ -1,10 +1,10 @@
 import React from "react";
 import {
-    Control,
-    Controller,
-    FieldErrors,
-    Path,
-    PathValue,
+  Control,
+  Controller,
+  FieldErrors,
+  Path,
+  PathValue,
 } from "react-hook-form";
 import { Text, View } from "react-native";
 import { formStyles } from "../../styles/formStyles";
@@ -17,6 +17,7 @@ type FormGroupDropdownProps<T, K extends Path<T> = Path<T>> = {
   control: Control<T>;
   errors: FieldErrors<T>;
   options: DropdownOption[];
+  isNullable?: boolean;
 } & (PathValue<T, K> extends string | number | undefined
   ? {}
   : { ERROR: "Field must be string | number | undefined" });
@@ -28,8 +29,13 @@ export function FormGroupDropdown<T, K extends Path<T>>({
   control,
   errors,
   options,
+  isNullable = true,
 }: FormGroupDropdownProps<T, K>) {
   const error = errors[name as keyof typeof errors];
+
+  const dropdownOptions = isNullable
+    ? [{ label: "No selection", value: undefined }, ...options]
+    : options;
 
   return (
     <View style={formStyles.formGroup}>
@@ -41,7 +47,7 @@ export function FormGroupDropdown<T, K extends Path<T>>({
           <Dropdown
             value={value}
             onChange={onChange}
-            options={options}
+            options={dropdownOptions}
             placeholder={placeholder}
             style={formStyles.dropdown}
           />

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import {
-    FlatList,
-    Modal,
-    Pressable,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { COLOR_STYLES } from "../../../styles/constants/colors";
 import { DIMENSIONS } from "../../../styles/constants/dimensions";
@@ -72,11 +72,13 @@ export function Dropdown({
             <FlatList
               data={options}
               keyExtractor={(item) => String(item.value)}
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <TouchableOpacity
                   style={[
                     styles.option,
                     item.value === value && styles.selectedOption,
+                    index === 0 && styles.firstOption,
+                    index === options.length - 1 && styles.lastOption,
                   ]}
                   onPress={() => handleSelect(item.value)}
                 >
@@ -129,10 +131,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: COLOR_STYLES.defaultTheme.colorSecondary,
+    backgroundColor: COLOR_STYLES.defaultTheme.colorTertiary,
     borderRadius: DIMENSIONS.borderRadius.l,
     width: "80%",
     maxHeight: "60%",
+    overflow: "hidden",
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -144,6 +147,15 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: COLOR_STYLES.defaultTheme.colorInteractiveInactive,
+  },
+  firstOption: {
+    borderTopLeftRadius: DIMENSIONS.borderRadius.l,
+    borderTopRightRadius: DIMENSIONS.borderRadius.l,
+  },
+  lastOption: {
+    borderBottomWidth: 0,
+    borderBottomLeftRadius: DIMENSIONS.borderRadius.l,
+    borderBottomRightRadius: DIMENSIONS.borderRadius.l,
   },
   selectedOption: {
     backgroundColor: COLOR_STYLES.defaultTheme.colorInteractiveActive,

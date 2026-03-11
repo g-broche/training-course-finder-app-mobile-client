@@ -9,7 +9,7 @@ import { containerStyles } from "../../styles/containerStyles";
 import { formStyles } from "../../styles/formStyles";
 import { textStyles } from "../../styles/textStyles";
 import { SearchAnnounceFilter } from "../../types/request";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
 import { FormGroupDropdown } from "./form-group-dropdown";
 import { FormGroupInput } from "./form-group-input";
 
@@ -18,7 +18,7 @@ interface AnnounceFilterFormProps {
 }
 
 const schema: yup.ObjectSchema<SearchAnnounceFilter> = yup.object({
-  search: yup
+  title: yup
     .string()
     .max(30, "Search query cannot exceed 30 characters")
     .optional(),
@@ -42,7 +42,7 @@ export default function AnnounceFilterForm({
   } = useForm<SearchAnnounceFilter>({
     resolver: yupResolver(schema),
     defaultValues: {
-      search: "",
+      title: "",
       categoryId: undefined,
       city: "",
     },
@@ -53,13 +53,11 @@ export default function AnnounceFilterForm({
       const categories = await getAllCategories();
       setCategories(categories);
     } catch (err) {
-      console.log(err);
       Alert.alert("Error", "Failed to load categories");
     }
   };
 
   const onSubmit = async (data: SearchAnnounceFilter) => {
-    console.log("filters on click", data);
     const filter = formatFilterFromForm(data);
     onFilterSubmit(filter);
   };
@@ -73,7 +71,7 @@ export default function AnnounceFilterForm({
       <Text style={textStyles.heading3}>Filters</Text>
       <View style={formStyles.container}>
         <FormGroupInput
-          name="search"
+          name="title"
           label="Title"
           placeholder="Enter partial title of announce"
           control={control}

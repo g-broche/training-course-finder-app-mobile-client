@@ -8,7 +8,7 @@ import { useContinueDiscussion } from "../../hooks/discussion/useContinueDiscuss
 import { useStartDiscussion } from "../../hooks/discussion/useStartDiscussions";
 import { DIMENSIONS } from "../../styles/constants/dimensions";
 import { NewMessageRequest } from "../../types/request";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
 import { FormGroupArea } from "./form-group-area";
 
 interface MessageFormProps {
@@ -35,10 +35,10 @@ export default function MessageForm({
   const scrollViewRef = useRef<ScrollView>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
-  const { mutate: startDiscussion, isPending: isPendingStartDiscussion } =
-    useStartDiscussion({ announceId });
-  const { mutate: continueDiscussion, isPending: isPendingContinueDiscussion } =
-    useContinueDiscussion({ discussionId });
+  const { mutate: startDiscussion } = useStartDiscussion({ announceId });
+  const { mutate: continueDiscussion } = useContinueDiscussion({
+    discussionId,
+  });
 
   const {
     control,
@@ -90,7 +90,6 @@ export default function MessageForm({
             onSuccess?.();
           },
           onError: (error) => {
-            console.error("Message submission error:", error);
             Alert.alert("Error", "Failed to send message.");
           },
         });
@@ -101,13 +100,11 @@ export default function MessageForm({
             onSuccess?.();
           },
           onError: (error) => {
-            console.error("Message submission error:", error);
             Alert.alert("Error", "Failed to send message.");
           },
         });
       }
     } catch (err) {
-      console.error("Message submission error:", err);
       Alert.alert("Error", "Failed to send message.");
     }
   };

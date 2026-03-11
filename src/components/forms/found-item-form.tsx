@@ -11,7 +11,7 @@ import { useCreateFoundAnnounce } from "../../hooks/announce/useCreateFoundAnnou
 import { getAllCategories } from "../../services/categoryService";
 import { formStyles } from "../../styles/formStyles";
 import { FoundItemRequest } from "../../types/request";
-import ActionButton from "../buttons/action-button";
+import ActionButton from "../shared/buttons/action-button";
 import { FormGroupArea } from "./form-group-area";
 import { FormGroupDate } from "./form-group-date";
 import { FormGroupDropdown } from "./form-group-dropdown";
@@ -82,7 +82,6 @@ export default function FoundItemForm() {
       const categories = await getAllCategories();
       setCategories(categories);
     } catch (err) {
-      console.log(err);
       Alert.alert("Error", "Failed to load categories");
     }
   };
@@ -106,7 +105,7 @@ export default function FoundItemForm() {
         setValue("country", place.country || "");
       }
     } catch (err) {
-      console.log("Reverse geocode error:", err);
+      console.error("Reverse geocode error:", err);
     }
   };
 
@@ -126,14 +125,10 @@ export default function FoundItemForm() {
       { data, image },
       {
         onSuccess: (result) => {
-          console.log(result);
           Alert.alert("Success", "Found item announce created successfully!");
           router.push("/announces/found");
         },
         onError: (err: any) => {
-          console.log("Full error:", err);
-          console.log("Error response:", err.response?.data);
-          console.log("Error status:", err.response?.status);
           Alert.alert("Error", "Submission failed.");
         },
       },
@@ -182,6 +177,7 @@ export default function FoundItemForm() {
         placeholder="Select category..."
         control={control}
         errors={errors}
+        isNullable={false}
         options={categories.map((cat) => ({
           label: cat.name,
           value: cat.id,

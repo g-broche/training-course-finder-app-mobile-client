@@ -38,7 +38,7 @@ export interface LostItemRequest {
 }
 
 export interface SearchAnnounceFilter {
-  search?: string;
+  title?: string;
   categoryId?: number | undefined;
   city?: string;
 }

@@ -10,6 +10,7 @@ import { DIMENSIONS } from "../../styles/constants/dimensions";
 import { textStyles } from "../../styles/textStyles";
 import { Discussion } from "../../types/dto";
 import { formatDate } from "../../utils/pipe";
+import { decodeHtmlEntities } from "../../utils/stringUtil";
 
 interface DiscussionCardProps {
   discussion: Discussion;
@@ -25,13 +26,18 @@ export function DiscussionCard({
     <View style={[styles.card, style]}>
       <TouchableOpacity key={discussion.discussionId} onPress={onPress}>
         <Text style={textStyles.inverse}>
-          Discussion with {discussion.announceResponder.displayName}
+          Discussion with{" "}
+          {decodeHtmlEntities(discussion.announceResponder.displayName)}
         </Text>
         <Text style={textStyles.inverse}>
           Started: {formatDate(discussion.createdAt)}
         </Text>
-        <Text style={[textStyles.inverse, styles.quote]}>
-          &quot;{discussion.excerpt}&quot;
+        <Text
+          style={[textStyles.inverse, styles.quote]}
+          numberOfLines={3}
+          ellipsizeMode="tail"
+        >
+          {decodeHtmlEntities(discussion.excerpt)}
         </Text>
       </TouchableOpacity>
     </View>
@@ -46,6 +52,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   quote: {
+    marginTop: DIMENSIONS.spacings.gaps.s,
     fontStyle: "italic",
   },
 });

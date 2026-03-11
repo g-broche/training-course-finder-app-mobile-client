@@ -12,14 +12,15 @@ export const usePaginatedUserAnnounces = ({
   size,
 }: UsePaginatedUserAnnouncesProps) => {
   const { authState } = useAuth();
-  const userToken = authState?.accessToken || "";
+  const userId = authState?.user?.uuid;
+  const isEnabled = !!authState?.accessToken && !!userId;
 
   return useQuery({
-    queryKey: ["announces", "user-announces", currentPage],
-    queryFn: () => getPaginatedUserAnnounces(currentPage, userToken, size),
+    queryKey: ["announces", "user-announces", userId, currentPage, size],
+    queryFn: () => getPaginatedUserAnnounces(currentPage, size),
     staleTime: 0,
     gcTime: 0,
     refetchOnMount: "always",
-    enabled: !!userToken,
+    enabled: isEnabled,
   });
 };
