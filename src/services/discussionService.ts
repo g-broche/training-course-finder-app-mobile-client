@@ -70,20 +70,19 @@ export const getDiscussion = async (
 export const addMessage = async (
   discussionId: string,
   message: NewMessageRequest,
-): Promise<DetailedDiscussion> => {
+): Promise<void> => {
   const requestUrl = ENDPOINTS.addMessage(discussionId);
 
   const response = await request(requestUrl, {
     method: "POST",
     body: JSON.stringify(message),
   });
-  if (!response.success || response.data == null) {
+  if (!response.success) {
     throw new Error(
       response.message ||
         "an unexpected error occured while adding message to discussion",
     );
   }
-  return response.data;
 };
 
 export const reportMessage = async (

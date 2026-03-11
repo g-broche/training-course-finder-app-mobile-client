@@ -1,5 +1,5 @@
-import { ViewStyle } from "react-native";
-import { useReportMessage } from "../../../hooks/announce/useReportMessage";
+import { Alert, ViewStyle } from "react-native";
+import { useReportMessage } from "../../../hooks/discussion/useReportMessage";
 import Menu from "./menu";
 import MenuItem from "./menu-item";
 
@@ -20,11 +20,17 @@ export function MenuMessageOtherUser({
     discussionId,
     messageId,
   });
+
   const handlePress = () => {
-    if (!isReported) {
-      reportMessage();
+    if (!isReported && !isPending) {
+      reportMessage(undefined, {
+        onSuccess: () => {
+          Alert.alert("Success", "Message reported successfully.");
+        },
+      });
     }
   };
+
   return (
     <Menu style={style}>
       <MenuItem

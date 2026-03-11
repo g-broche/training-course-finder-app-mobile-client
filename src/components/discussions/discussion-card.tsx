@@ -10,6 +10,7 @@ import { DIMENSIONS } from "../../styles/constants/dimensions";
 import { textStyles } from "../../styles/textStyles";
 import { Discussion } from "../../types/dto";
 import { formatDate } from "../../utils/pipe";
+import { decodeHtmlEntities } from "../../utils/stringUtil";
 
 interface DiscussionCardProps {
   discussion: Discussion;
@@ -25,7 +26,8 @@ export function DiscussionCard({
     <View style={[styles.card, style]}>
       <TouchableOpacity key={discussion.discussionId} onPress={onPress}>
         <Text style={textStyles.inverse}>
-          Discussion with {discussion.announceResponder.displayName}
+          Discussion with{" "}
+          {decodeHtmlEntities(discussion.announceResponder.displayName)}
         </Text>
         <Text style={textStyles.inverse}>
           Started: {formatDate(discussion.createdAt)}
@@ -35,7 +37,7 @@ export function DiscussionCard({
           numberOfLines={3}
           ellipsizeMode="tail"
         >
-          {discussion.excerpt}
+          {decodeHtmlEntities(discussion.excerpt)}
         </Text>
       </TouchableOpacity>
     </View>

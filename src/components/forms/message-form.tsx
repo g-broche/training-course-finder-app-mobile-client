@@ -35,10 +35,10 @@ export default function MessageForm({
   const scrollViewRef = useRef<ScrollView>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
-  const { mutate: startDiscussion, isPending: isPendingStartDiscussion } =
-    useStartDiscussion({ announceId });
-  const { mutate: continueDiscussion, isPending: isPendingContinueDiscussion } =
-    useContinueDiscussion({ discussionId });
+  const { mutate: startDiscussion } = useStartDiscussion({ announceId });
+  const { mutate: continueDiscussion } = useContinueDiscussion({
+    discussionId,
+  });
 
   const {
     control,

@@ -9,3 +9,19 @@ Client : App the users will be interacting with for the intended features. Will 
 Back office : Interface restricted to admin only and mainly intended for moderation purpose. Will be made with Angular.
 
 This repo covers the subproject related to the mobile client intended for all users to interact with the available features.
+
+## Documentation
+
+- [Architecture](./docs/architecture.md)
+- [Expo Go (development mode)](./docs/expo-go-dev-mode.md)
+- [Authentication](./docs/authentication.md)
+- [Deployment with EAS](./docs/deploy.md)
+
+## Quick start
+
+```bash
+npm.cmd install
+npm.cmd run start
+```
+
+Then scan the Expo QR code with Expo Go.
