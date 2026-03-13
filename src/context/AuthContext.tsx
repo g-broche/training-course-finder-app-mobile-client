@@ -1,13 +1,20 @@
-import axios from "axios";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Alert } from "react-native";
 import { clearAllQueries } from "../core/queryClient";
 import {
-  getUserFromToken,
+  AuthSessionData,
+  getCurrentUser,
   loginUser,
   logoutUser,
+  refreshAccessToken,
   registerUser,
 } from "../services/authService";
 import {
@@ -47,18 +54,25 @@ export const AuthProvider = ({ children }: any) => {
     user: null,
   });
 
-  // Function to update tokens (used by refresh logic in base-api-service)
-  const updateTokens = async (accessToken: string, refreshToken: string) => {
-    await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
-    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
-    const user = getUserFromToken(accessToken);
-    setAuthState({
-      accessToken,
-      refreshToken,
-      authenticated: true,
-      user,
-    });
-  };
+  // Function to update session (used by refresh logic in base-api-service)
+  const updateTokens = useCallback(
+    async (
+      accessToken: string,
+      refreshToken: string,
+      userFromApi?: LoggedUser,
+    ) => {
+      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
+      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+      const user = userFromApi ?? authState.user;
+      setAuthState({
+        accessToken,
+        refreshToken,
+        authenticated: true,
+        user,
+      });
+    },
+    [authState.user],
+  );
 
   // Register token handlers for base-api-service
   useEffect(() => {
@@ -69,12 +83,11 @@ export const AuthProvider = ({ children }: any) => {
       }),
       updateTokens,
     );
-  }, [authState.accessToken, authState.refreshToken]);
+  }, [authState.accessToken, authState.refreshToken, updateTokens]);
 
   const forceLogout = async () => {
     await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
     await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
-    delete axios.defaults.headers.common["Authorization"];
     setAuthState({
       accessToken: null,
       refreshToken: null,
@@ -97,15 +110,64 @@ export const AuthProvider = ({ children }: any) => {
       const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
 
       if (accessToken) {
-        axios.defaults.headers.common["Authorization"] =
-          `Bearer ${accessToken}`;
-        const user = getUserFromToken(accessToken);
-        setAuthState({
-          accessToken,
-          refreshToken,
-          authenticated: true,
-          user,
-        });
+        const meResponse = await getCurrentUser(accessToken);
+        const currentUser = meResponse.data as LoggedUser | undefined;
+
+        if (meResponse.success && currentUser) {
+          setAuthState({
+            accessToken,
+            refreshToken,
+            authenticated: true,
+            user: currentUser,
+          });
+          return;
+        }
+
+        if (refreshToken) {
+          const response = await refreshAccessToken(refreshToken);
+          const sessionData = response.data as AuthSessionData | undefined;
+          if (response.success && sessionData) {
+            await SecureStore.setItemAsync(
+              ACCESS_TOKEN_KEY,
+              sessionData.accessToken,
+            );
+            await SecureStore.setItemAsync(
+              REFRESH_TOKEN_KEY,
+              sessionData.refreshToken,
+            );
+            setAuthState({
+              accessToken: sessionData.accessToken,
+              refreshToken: sessionData.refreshToken,
+              authenticated: true,
+              user: sessionData.user,
+            });
+          } else {
+            await forceLogout();
+          }
+        } else {
+          await forceLogout();
+        }
+      } else if (refreshToken) {
+        const response = await refreshAccessToken(refreshToken);
+        const sessionData = response.data as AuthSessionData | undefined;
+        if (response.success && sessionData) {
+          await SecureStore.setItemAsync(
+            ACCESS_TOKEN_KEY,
+            sessionData.accessToken,
+          );
+          await SecureStore.setItemAsync(
+            REFRESH_TOKEN_KEY,
+            sessionData.refreshToken,
+          );
+          setAuthState({
+            accessToken: sessionData.accessToken,
+            refreshToken: sessionData.refreshToken,
+            authenticated: true,
+            user: sessionData.user,
+          });
+        } else {
+          await forceLogout();
+        }
       } else {
         setAuthState({
           accessToken: null,
@@ -122,33 +184,26 @@ export const AuthProvider = ({ children }: any) => {
   const register = async (data: SignUpData): Promise<void> => {
     try {
       const response = await registerUser(data);
-      const isAuthResponseValid =
-        response.success &&
-        response.data.accessToken &&
-        response.data.refreshToken &&
-        typeof response.data.accessToken === "string" &&
-        typeof response.data.refreshToken === "string" &&
-        response.data.accessToken.length > 0 &&
-        response.data.refreshToken.length > 0;
-      if (!isAuthResponseValid) {
+      const sessionData = response.data as AuthSessionData | undefined;
+      if (!response.success || !sessionData) {
         Alert.alert(
           "Sign up error",
           response.message || "Unknown error occured during sign up",
         );
         return;
       }
-      const accessToken = response.data.accessToken;
-      const refreshToken = response.data.refreshToken;
-      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
-      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
-      const loggedUser = getUserFromToken(accessToken);
+      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, sessionData.accessToken);
+      await SecureStore.setItemAsync(
+        REFRESH_TOKEN_KEY,
+        sessionData.refreshToken,
+      );
       setAuthState({
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+        accessToken: sessionData.accessToken,
+        refreshToken: sessionData.refreshToken,
         authenticated: true,
-        user: loggedUser,
+        user: sessionData.user,
       });
-    } catch (error) {
+    } catch {
       Alert.alert("Sign up error", "Unknown error occured during sign up");
     }
   };
@@ -156,30 +211,23 @@ export const AuthProvider = ({ children }: any) => {
   const login = async (credentials: Credentials) => {
     try {
       const response = await loginUser(credentials);
-      const isAuthResponseValid =
-        response.success &&
-        response.data.accessToken &&
-        response.data.refreshToken &&
-        typeof response.data.accessToken === "string" &&
-        typeof response.data.refreshToken === "string" &&
-        response.data.accessToken.length > 0 &&
-        response.data.refreshToken.length > 0;
-      if (!isAuthResponseValid) {
+      const sessionData = response.data as AuthSessionData | undefined;
+      if (!response.success || !sessionData) {
         const message =
           response.message || "Unknown error occured during sign in";
         Alert.alert("Sign in error", message);
         return;
       }
-      const accessToken = response.data.accessToken;
-      const refreshToken = response.data.refreshToken;
-      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
-      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
-      const loggedUser = getUserFromToken(accessToken);
+      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, sessionData.accessToken);
+      await SecureStore.setItemAsync(
+        REFRESH_TOKEN_KEY,
+        sessionData.refreshToken,
+      );
       setAuthState({
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+        accessToken: sessionData.accessToken,
+        refreshToken: sessionData.refreshToken,
         authenticated: true,
-        user: loggedUser,
+        user: sessionData.user,
       });
     } catch (error) {
       console.error(error);
