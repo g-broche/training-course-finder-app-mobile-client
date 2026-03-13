@@ -1,5 +1,6 @@
 import Constants from "expo-constants";
 import { ApiResponse } from "../types/api-interface";
+import { LoggedUser } from "../types/dto";
 import { isApiResponse } from "../utils/typeGuard";
 
 const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
@@ -9,7 +10,11 @@ let tokenGetter:
   | (() => { accessToken: string | null; refreshToken: string | null })
   | null = null;
 let tokenSetter:
-  | ((accessToken: string, refreshToken: string) => Promise<void>)
+  | ((
+      accessToken: string,
+      refreshToken: string,
+      user?: LoggedUser,
+    ) => Promise<void>)
   | null = null;
 // Forced logout on failed refresh
 let authRefreshFailureHandler: (() => Promise<void> | void) | null = null;
@@ -25,7 +30,11 @@ let isRefreshing = false;
 // Function to set token handlers, called from AuthContext
 export const setTokenHandlers = (
   getter: () => { accessToken: string | null; refreshToken: string | null },
-  setter: (accessToken: string, refreshToken: string) => Promise<void>,
+  setter: (
+    accessToken: string,
+    refreshToken: string,
+    user?: LoggedUser,
+  ) => Promise<void>,
 ) => {
   tokenGetter = getter;
   tokenSetter = setter;
@@ -155,13 +164,15 @@ export const request = async (
           refreshResponse.ok &&
           refreshData?.success &&
           refreshData.data?.accessToken &&
-          refreshData.data?.refreshToken
+          refreshData.data?.refreshToken &&
+          refreshData.data?.user
         ) {
           const newAccessToken = refreshData.data.accessToken;
           const newRefreshToken = refreshData.data.refreshToken;
+          const refreshedUser = refreshData.data.user as LoggedUser;
 
           // Update tokens and process the queue of failed requests
-          await tokenSetter(newAccessToken, newRefreshToken);
+          await tokenSetter(newAccessToken, newRefreshToken, refreshedUser);
           processQueue(null, newAccessToken);
           // Retry original request with new token
           const retryHeaders = new Headers(headers);

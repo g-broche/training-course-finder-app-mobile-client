@@ -1,14 +1,20 @@
-import { jwtDecode } from "jwt-decode";
 import { ApiResponse } from "../types/api-interface";
 import { LoggedUser } from "../types/dto";
 import { Credentials, SignUpData } from "../types/request";
 import { request } from "./base-api-service";
+
+export interface AuthSessionData {
+  accessToken: string;
+  refreshToken: string;
+  user: LoggedUser;
+}
 
 const ENDPOINTS = {
   register: "/api/auth/signup",
   login: "/api/auth/signin",
   logout: "/api/auth/signoff",
   refresh: "/api/auth/refresh",
+  currentUser: "/api/auth/me",
   displayNameAvailability: "/api/users/displayName/available",
 };
 
@@ -48,27 +54,18 @@ export const refreshAccessToken = async (
   });
 };
 
-export const getUserFromToken = (token: string): LoggedUser | null => {
-  if (token === undefined || token === null || token.length === 0) return null;
-
-  try {
-    const decoded: any = jwtDecode(token);
-    const user: LoggedUser = {
-      uuid: decoded.uuid,
-      email: decoded.sub,
-      roles: decoded.roles,
-      firstName: decoded.firstName,
-      lastName: decoded.lastName,
-      displayName: decoded.displayName,
-      isVerified: decoded.isVerified,
-      hasAcceptedGdpr: decoded.hasAcceptedGdpr,
-      userCreatedAt: new Date(decoded.userCreatedAt),
-    };
-    return user;
-  } catch (error) {
-    console.error("Failed to decode token:", error);
-    return null;
+export const getCurrentUser = async (
+  accessToken?: string,
+): Promise<ApiResponse> => {
+  const headers = new Headers();
+  if (accessToken) {
+    headers.set("Authorization", `Bearer ${accessToken}`);
   }
+
+  return await request(ENDPOINTS.currentUser, {
+    method: "GET",
+    headers,
+  });
 };
 
 /**
